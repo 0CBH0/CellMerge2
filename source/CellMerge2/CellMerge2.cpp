@@ -171,7 +171,7 @@ void CellMerge2::aboutFunc()
 	QMessageBox::about(this, QStringLiteral("使用说明"),
 		QStringLiteral("<h2>CellMerge2</h2>"
 			"<p>Version：%1  CBH 制"
-			"<p>如有疑问请联系").arg(version));
+			"<p><a href='https://github.com/0CBH0/CellMerge2/wiki'>使用教程Wiki</a>").arg(version));
 }
 
 void CellMerge2::createActions()
