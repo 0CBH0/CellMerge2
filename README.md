@@ -29,6 +29,7 @@ WIki地址：[CellMerge2使用教程Wiki](https://github.com/0CBH0/CellMerge2/wi
 
 ## 平台及编译
 Windows x64
+
 通过Visual Studio 2017编译
 
 ## 依赖库
