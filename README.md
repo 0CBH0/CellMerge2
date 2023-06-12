@@ -37,7 +37,7 @@ Windows x64
 - OpenCV
 - LibXML2
 
-## 版本信息
+## 更新历史
 - v1.8 初始版本
 
 ## 开源信息
