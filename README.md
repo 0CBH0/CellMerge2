@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1 align="center">CellMerge2</h1>
+<h1 align="center"><img src="https://raw.githubusercontent.com/0CBH0/CellMerge2/main/image/CellMerge2.png"/> CellMerge2</h1>
 
 ![GitHub Release (latest SemVer)](https://img.shields.io/github/v/release/0CBH0/CellMerge2?style=flat-square)
 [![GitHub License](https://img.shields.io/github/license/0CBH0/CellMerge2?style=flat-square)](https://github.com/0CBH0/CellMerge2/blob/main/LICENSE)
