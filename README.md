@@ -35,7 +35,7 @@ Windows x64
 ## 依赖库
 - Qt5
 - OpenCV
- -LibXML2
+- LibXML2
 
 ## 版本信息
 - v1.8 初始版本
