@@ -22,7 +22,7 @@
 - Leica Image File Format (*.lif)
 
 ## 使用教程
-WIki地址：[CellMerge2使用教程Wiki](https://github.com/0CBH0/CellMerge2/wiki/CellMerge2)
+WIki地址：[CellMerge2使用教程Wiki](https://github.com/0CBH0/CellMerge2/wiki)
 
 ## 主界面预览
 ![Overview of CellMerge2](https://raw.githubusercontent.com/0CBH0/CellMerge2/main/image/main_view.png)
