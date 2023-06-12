@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <QtLastBackgroundBuild>2023-06-08T06:51:35.8201759Z</QtLastBackgroundBuild>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <QtLastBackgroundBuild>2023-06-08T06:51:36.8523485Z</QtLastBackgroundBuild>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <QtLastBackgroundBuild>2023-06-08T06:51:37.2109469Z</QtLastBackgroundBuild>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <QtLastBackgroundBuild>2023-06-08T06:51:37.4027012Z</QtLastBackgroundBuild>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid></ProjectGuid>
+    <RootNamespace>qtvars</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <OutputDirectory>.\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <PrimaryOutput>qtvars</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">.\</OutDir>
+    <TargetName Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">qtvars</TargetName>
+    <IgnoreImportLibrary Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\CBH\AppData\Local\Temp\ziu1ozia.i52;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\include;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\include\QtWidgets;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\include\QtGui;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\include\QtANGLE;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\include\QtCore;C:\Users\CBH\AppData\Local\Temp\ziu1ozia.i52;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>.\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>.\</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName></ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qtmain.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qwindows.lib;winspool.lib;imm32.lib;oleaut32.lib;shlwapi.lib;rpcrt4.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5EventDispatcherSupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5AccessibilitySupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5FontDatabaseSupport.lib;ole32.lib;gdi32.lib;user32.lib;advapi32.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qtfreetype.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5ThemeSupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qgif.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qicns.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qico.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qjpeg.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qtga.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qtiff.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qwbmp.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats\qwebp.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5Widgets.lib;shell32.lib;uxtheme.lib;dwmapi.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5Gui.lib;gdi32.lib;comdlg32.lib;oleaut32.lib;imm32.lib;winmm.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qtlibpng.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qtharfbuzz.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\Qt5Core.lib;kernel32.lib;user32.lib;shell32.lib;uuid.lib;ole32.lib;advapi32.lib;ws2_32.lib;mpr.lib;sicuin.lib;sicuuc.lib;sicudt.lib;version.lib;winmm.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib\qtpcre2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\platforms;D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\plugins\imageformats;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <OutputFile>$(OutDir)\qtvars.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">cl -BxD:\Qt\Qt5.9.1\5.9.1\msvc2017_static\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -O2 -MT -W0 -E D:\Qt\Qt5.9.1\5.9.1\msvc2017_static\mkspecs\features\data\dummy.cpp 2>NUL >moc_predefs.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">Generate moc_predefs.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">moc_predefs.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClCompile Include="C:\Users\CBH\AppData\Local\Temp\ziu1ozia.i52\qtvars_plugin_import.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

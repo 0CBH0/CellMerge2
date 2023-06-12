@@ -1,0 +1,2 @@
+﻿  uic CellMerge2.ui
+C:\Users\CBH\AppData\Local\QtMsBuild\qt_globals.targets(393,5): error MSB3491: 未能向文件“Debug\CellMerge2.tlog\uic.read.1u.tlog”写入命令行。未能找到路径“E:\work\OpenCV\CellMerge2\CellMerge2\Debug\CellMerge2.tlog\uic.read.1u.tlog”的一部分。

@@ -1,0 +1,60 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+<Qt_DEFINES_>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG</Qt_DEFINES_>
+<Qt_INCLUDEPATH_>C:\Users\CBH\AppData\Local\Temp\0tnc42y5.lwg;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\include;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\include\QtWidgets;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\include\QtGui;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\include\QtANGLE;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\include\QtCore;C:\Users\CBH\AppData\Local\Temp\0tnc42y5.lwg;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\mkspecs\win32-msvc</Qt_INCLUDEPATH_>
+<Qt_STDCPP_></Qt_STDCPP_>
+<Qt_RUNTIME_>MultiThreaded</Qt_RUNTIME_>
+<Qt_CL_OPTIONS_>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding</Qt_CL_OPTIONS_>
+<Qt_LIBS_>D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qtmain.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qwindows.lib;winspool.lib;imm32.lib;oleaut32.lib;shlwapi.lib;rpcrt4.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5EventDispatcherSupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5AccessibilitySupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5FontDatabaseSupport.lib;ole32.lib;gdi32.lib;user32.lib;advapi32.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qtfreetype.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5ThemeSupport.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qgif.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qicns.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qico.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qjpeg.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qtga.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qtiff.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qwbmp.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\plugins\imageformats\qwebp.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5Widgets.lib;shell32.lib;uxtheme.lib;dwmapi.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5Gui.lib;gdi32.lib;comdlg32.lib;oleaut32.lib;imm32.lib;winmm.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qtlibpng.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qtharfbuzz.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\Qt5Core.lib;kernel32.lib;user32.lib;shell32.lib;uuid.lib;ole32.lib;advapi32.lib;ws2_32.lib;mpr.lib;sicuin.lib;sicuuc.lib;sicudt.lib;version.lib;winmm.lib;D:\Qt\Qt5.9.1\5.9.1\msvc2017_64_static\lib\qtpcre2.lib</Qt_LIBS_>
+<Qt_LINK_OPTIONS_>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"</Qt_LINK_OPTIONS_>
+<QMake_QT_SYSROOT_></QMake_QT_SYSROOT_>
+<QMake_QT_INSTALL_PREFIX_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static</QMake_QT_INSTALL_PREFIX_>
+<QMake_QT_INSTALL_ARCHDATA_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static</QMake_QT_INSTALL_ARCHDATA_>
+<QMake_QT_INSTALL_DATA_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static</QMake_QT_INSTALL_DATA_>
+<QMake_QT_INSTALL_DOCS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/doc</QMake_QT_INSTALL_DOCS_>
+<QMake_QT_INSTALL_HEADERS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/include</QMake_QT_INSTALL_HEADERS_>
+<QMake_QT_INSTALL_LIBS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/lib</QMake_QT_INSTALL_LIBS_>
+<QMake_QT_INSTALL_LIBEXECS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/bin</QMake_QT_INSTALL_LIBEXECS_>
+<QMake_QT_INSTALL_BINS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/bin</QMake_QT_INSTALL_BINS_>
+<QMake_QT_INSTALL_TESTS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/tests</QMake_QT_INSTALL_TESTS_>
+<QMake_QT_INSTALL_PLUGINS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/plugins</QMake_QT_INSTALL_PLUGINS_>
+<QMake_QT_INSTALL_IMPORTS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/imports</QMake_QT_INSTALL_IMPORTS_>
+<QMake_QT_INSTALL_QML_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/qml</QMake_QT_INSTALL_QML_>
+<QMake_QT_INSTALL_TRANSLATIONS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/translations</QMake_QT_INSTALL_TRANSLATIONS_>
+<QMake_QT_INSTALL_CONFIGURATION_></QMake_QT_INSTALL_CONFIGURATION_>
+<QMake_QT_INSTALL_EXAMPLES_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/examples</QMake_QT_INSTALL_EXAMPLES_>
+<QMake_QT_INSTALL_DEMOS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/examples</QMake_QT_INSTALL_DEMOS_>
+<QMake_QT_HOST_PREFIX_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static</QMake_QT_HOST_PREFIX_>
+<QMake_QT_HOST_DATA_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static</QMake_QT_HOST_DATA_>
+<QMake_QT_HOST_BINS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/bin</QMake_QT_HOST_BINS_>
+<QMake_QT_HOST_LIBS_>D:/Qt/Qt5.9.1/5.9.1/msvc2017_64_static/lib</QMake_QT_HOST_LIBS_>
+<QMake_QMAKE_SPEC_>win32-msvc</QMake_QMAKE_SPEC_>
+<QMake_QMAKE_XSPEC_>win32-msvc</QMake_QMAKE_XSPEC_>
+<QMake_QMAKE_VERSION_>3.1</QMake_QMAKE_VERSION_>
+<QMake_QT_VERSION_>5.9.1</QMake_QT_VERSION_>
+<Qt_INCLUDEPATH_
+      >$(Qt_INCLUDEPATH_);x64\Release\moc;x64\Release\uic</Qt_INCLUDEPATH_>
+    <QtBkup_QtInstall
+      >msvc2017_64_static</QtBkup_QtInstall>
+    <QtBkup_QtModules
+      >core;gui;widgets</QtBkup_QtModules>
+    <QtBkup_QtPathBinaries
+      >bin</QtBkup_QtPathBinaries>
+    <QtBkup_QtPathLibraryExecutables
+      >bin</QtBkup_QtPathLibraryExecutables>
+    <QtBkup_QtHeaderSearchPath
+      ></QtBkup_QtHeaderSearchPath>
+    <QtBkup_QtLibrarySearchPath
+      ></QtBkup_QtLibrarySearchPath>
+    <QtBkup_QtVars
+      >DEFINES=/Project/ItemDefinitionGroup/ClCompile/PreprocessorDefinitions;INCLUDEPATH=/Project/ItemDefinitionGroup/ClCompile/AdditionalIncludeDirectories;STDCPP=/Project/ItemDefinitionGroup/ClCompile/LanguageStandard;RUNTIME=/Project/ItemDefinitionGroup/ClCompile/RuntimeLibrary;CL_OPTIONS=/Project/ItemDefinitionGroup/ClCompile/AdditionalOptions;LIBS=/Project/ItemDefinitionGroup/Link/AdditionalDependencies;LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions</QtBkup_QtVars>
+    <QtBkup_QMakeCodeLines
+      ></QtBkup_QMakeCodeLines>
+    <QtBkup_QtBuildConfig
+      >release</QtBkup_QtBuildConfig>
+    <QtVersion>5.9.1</QtVersion>
+    <QtVersionMajor>5</QtVersionMajor>
+    <QtVersionMinor>9</QtVersionMinor>
+    <QtVersionPatch>1</QtVersionPatch>
+  </PropertyGroup>
+</Project>

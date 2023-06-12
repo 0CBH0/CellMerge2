@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StatForm</class>
+ <widget class="QWidget" name="StatForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>区域统计</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="40,1,4">
+     <item>
+      <widget class="QTableView" name="table">
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>700</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,5">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>参考通道</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="layerBox">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>计算模式</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="modeBox">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>包含</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>距离</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2倍距离</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1/2倍距离</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1/4倍距离</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="roiBox">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>当前区域</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="calcButton">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>计算</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportButton">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>导出</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="hideButton">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>返回</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CellMerge2Class</class>
+ <widget class="QMainWindow" name="CellMerge2Class">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
+  <property name="windowTitle">
+   <string>CellMerge2</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="200,2,1,2">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="ClickQLabel" name="mainForm">
+        <property name="minimumSize">
+         <size>
+          <width>700</width>
+          <height>600</height>
+         </size>
+        </property>
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="depthSlider">
+        <property name="minimumSize">
+         <size>
+          <width>25</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="invertedAppearance">
+         <bool>true</bool>
+        </property>
+        <property name="invertedControls">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,5,1,1,1,1,12,1,1">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,200,1">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>区域</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="roiEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="roiButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>复位</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,200,1">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>通道</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="nameEdit">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="maxLength">
+             <number>60</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ClickQLabel" name="layerColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="LevelSetting" name="levelSetting" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>110</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,200,1">
+          <item>
+           <widget class="QLabel" name="setLabel">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>权重</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="weightSlider">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="pageStep">
+             <number>2</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="displayBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>显示</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="resetButton">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>参数还原</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="infoLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>当前通道</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="selectBox">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>25</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="editButton">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>显示区域</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="statButton">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>统计区域</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionHelp">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="actionFile">
+   <property name="text">
+    <string>打开</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>导入</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="actionAdd_Layer">
+   <property name="text">
+    <string>添加层</string>
+   </property>
+  </action>
+  <action name="actionRemove_Layer">
+   <property name="text">
+    <string>删除层</string>
+   </property>
+  </action>
+  <action name="actionReset_Layer">
+   <property name="text">
+    <string>还原层</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>导出</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LevelSetting</class>
+   <extends>QWidget</extends>
+   <header>levelsetting.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ClickQLabel</class>
+   <extends>QLabel</extends>
+   <header>clickqlabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="CellMerge2.qrc"/>
+ </resources>
+ <connections/>
+</ui>
