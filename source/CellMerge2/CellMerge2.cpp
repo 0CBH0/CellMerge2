@@ -209,7 +209,7 @@ void CellMerge2::createMenus()
 
 void CellMerge2::openFunc()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, QStringLiteral("选择项目文件位置..."), ".", QStringLiteral("项目文件 (*.cmr)"));
+	QString fileName = QFileDialog::getOpenFileName(this, QStringLiteral("选择项目文件..."), ".", QStringLiteral("项目文件 (*.cmr)"));
 	if (fileName == "") return;
 	disableWidget(true);
 	int res = loadFile(fileName, "cmr");
@@ -235,18 +235,23 @@ void CellMerge2::saveFunc()
 
 void CellMerge2::importFunc()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, QStringLiteral("选择图像文件位置..."), ".", QStringLiteral("图像文件 (*.*)"));
-	if (fileName == "") return;
-	QStringList info = fileName.split(".");
+	QStringList fileNames = QFileDialog::getOpenFileNames(this, QStringLiteral("选择图像文件..."), ".", QStringLiteral("图像文件 (*.*)"));
+	if (fileNames.size() == 0 || fileNames[0] == "") return;
 	disableWidget(true);
-	int res = loadFile(fileName, info[info.size() - 1]);
-	disableWidget(false);
-	if (res == -1 || imageData.layerList.size() == 0)
+	if (fileNames.size() == 1)
 	{
-		QMessageBox::information(this, QStringLiteral("提示"), QStringLiteral("读取失败!"));
-		return;
+		QStringList info = fileNames[0].split(".");
+		int res = loadFile(fileNames[0], info[info.size() - 1]);
+		if (res == -1 || imageData.layerList.size() == 0) QMessageBox::information(this, QStringLiteral("提示"), QStringLiteral("读取失败!"));
+		else projectName = info[info.size() - 1] == "cmr" ? fileNames[0] : "";
 	}
-	projectName = info[info.size() - 1] == "cmr" ? fileName : "";
+	else
+	{
+		int res = loadSeries(fileNames);
+		if (res == -1 || imageData.layerList.size() == 0) QMessageBox::information(this, QStringLiteral("提示"), QStringLiteral("读取失败!"));
+		else projectName = "";
+	}
+	disableWidget(false);
 }
 
 void CellMerge2::exportFunc()
@@ -306,6 +311,71 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	calcHist();
 	refreshView(true);
 	return res;
+}
+
+int CellMerge2::loadSeries(QStringList fileNames)
+{
+	if (fileNames.size() == 0) return -1;
+	fileNames.sort();
+	QTextCodec *code = QTextCodec::codecForName("GB2312");
+	string fileNameConv = code->fromUnicode(fileNames[0]).data();
+	Mat img = imread(fileNameConv);
+	if (!img.data) return -1;
+	imageData.release();
+	imageData.depth = fileNames.size();
+	imageData.size = Size(img.cols, img.rows);
+	imageData.addLayer("Blue", Vec3b(0, 0, 255));
+	imageData.addLayer("Green", Vec3b(0, 255, 0));
+	imageData.addLayer("Red", Vec3b(255, 0, 0));
+	for (int i = 0; i < fileNames.size(); i++)
+	{
+		fileNameConv = code->fromUnicode(fileNames[i]).data();
+		img = imread(fileNameConv);
+		if (!img.data || imageData.size != Size(img.cols, img.rows))
+		{
+			imageData.release();
+			return -1;
+		}
+		vector<Mat> chs;
+		split(img, chs);
+		imageData.layerList[0].matList[i] = chs[0].clone();
+		imageData.normalize(0, i);
+		imageData.layerList[1].matList[i] = chs[1].clone();
+		imageData.normalize(1, i);
+		imageData.layerList[2].matList[i] = chs[2].clone();
+		imageData.normalize(2, i);
+		imageData.nucId = 0;
+		for (size_t j = 0; j < chs.size(); j++) chs[j].release();
+		vector<Mat>().swap(chs);
+	}
+	img.release();
+	imageData.calcMode();
+	Size labelSize = Size(ui.mainForm->size().width(), ui.mainForm->size().height());
+	roi = Rect(0, 0, imageData.size.width, imageData.size.height);
+	setMode(0);
+	disableWidget(false);
+	ui.depthSlider->setRange(0, imageData.depth - 1);
+	ui.depthSlider->setValue(0);
+	ui.selectBox->clear();
+	if (imageData.imgMode == 1)
+	{
+		imageData.nucId = 0;
+		imageData.layerList[0].name = "BrightField";
+		ui.selectBox->addItem(QString::fromStdString(imageData.layerList[0].name));
+		ui.selectBox->setCurrentIndex(0);
+		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
+		imageData.cellLayer.color = Vec3b(255, 0, 0);
+	}
+	else
+	{
+		for (size_t i = 0; i < imageData.layerList.size(); i++) ui.selectBox->addItem(QString::fromStdString(imageData.layerList[i].name));
+		ui.selectBox->setCurrentIndex(0);
+		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
+	}
+	setWidget(0);
+	calcHist();
+	refreshView(true);
+	return 0;
 }
 
 int CellMerge2::readCMR(QString fileName)
@@ -501,6 +571,7 @@ int CellMerge2::readLIF(QString fileName)
 	fclose(lif);
 
 	ItemSelector itemSelector(this);
+	itemSelector.setWindowTitle(QStringLiteral("选择图像序列..."));
 	vector<vector<string>> channelList;
 	vector<vector<uint>> dimList;
 	curNode = xmlDocGetRootElement(doc);

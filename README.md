@@ -20,6 +20,7 @@
 ## 支持文件类型
 - General Image Format (*.tif, *.png, *.bmp, *.jpg...)
 - Leica Image File Format (*.lif)
+- Image Series of Slices ...
 
 ## 使用教程
 WIki地址：[CellMerge2使用教程Wiki](https://github.com/0CBH0/CellMerge2/wiki)

@@ -37,6 +37,7 @@ private:
 	void createActions();
 	void createMenus();
 	int loadFile(QString fileName, QString type);
+	int loadSeries(QStringList fileNames);
 	int readCMR(QString fileName);
 	int writeCMR(QString fileName);
 	int readLIF(QString fileName);
