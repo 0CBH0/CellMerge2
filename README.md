@@ -39,7 +39,7 @@ Windows x64
 - LibXML2
 
 ## 更新历史
-- v1.8 初始版本
+- v1.9 初始版本
 
 ## 开源信息
 MIT license
