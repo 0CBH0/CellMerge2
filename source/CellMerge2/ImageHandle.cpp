@@ -210,17 +210,31 @@ void ImageData::release()
 
 void ImageData::calcMode()
 {
+	vector<int> cts;
 	if (size.area() == 0 || depth == 0) return;
-	Mat img = getImage(0);
-	uint valMin = 64 * 64 * 3, valMax = 192 * 192 * 3;
-	uint countMin = 0, countMax = 0;
-	for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+	Mat res = Mat::zeros(size, CV_8UC3);
+	Vec3b pxs[256];
+	for (size_t i = 0; i < layerList.size(); i++)
 	{
-		uint val = pow(img.at<Vec3b>(x, y)[0], 2) + pow(img.at<Vec3b>(x, y)[1], 2) + pow(img.at<Vec3b>(x, y)[2], 2);
-		if (val < valMin) countMin++;
-		if (val > valMax) countMax++;
+		for (int k = 0; k < 256; k++) pxs[k] = layerList[i].color * (k / 255.0);
+		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+		{
+			Vec3b pixel = pxs[layerList[i].matList[0].at<uchar>(x, y)];
+			res.at<Vec3b>(x, y)[0] = max(res.at<Vec3b>(x, y)[0], pixel[0]);
+			res.at<Vec3b>(x, y)[1] = max(res.at<Vec3b>(x, y)[1], pixel[1]);
+			res.at<Vec3b>(x, y)[2] = max(res.at<Vec3b>(x, y)[2], pixel[2]);
+		}
 	}
-	imgMode = countMin > countMax ? 0 : 1;
+	Mat img;
+	cvtColor(res, img, COLOR_RGB2GRAY);
+	vector<int> valCount(16, 0);
+	for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) valCount[img.at<uchar>(x, y) / 16]++;
+	int fid = 0, sid = 15;
+	for (int i = 0; i < 16; i++) if (valCount[i] >= valCount[fid]) fid = i;
+	for (int i = 15; i >= 0; i--) if (valCount[i] >= valCount[sid] && i != fid) sid = i;
+	if (abs(fid - sid) > 2) imgMode = min(fid, sid) < 4 ? 0 : 1; else imgMode = fid < 4 ? 0 : 1;
+	img.release();
+	res.release();
 }
 
 void ImageData::addLayer(string n, Vec3b c, unsigned char t)
@@ -262,19 +276,62 @@ Mat ImageData::getImage(unsigned int d)
 	Mat res = Mat::zeros(size, CV_8UC3);
 	if (d >= depth) return res;
 	double coef[256];
-	Vec3b pxs[256];
-	for (size_t i = 0; i < layerList.size(); i++)
+	if (imgMode == 1)
 	{
-		int id = imgMode == 1 ? 0 : i;
-		if (layerList[id].type > 0 || layerList[id].display == 0 || layerList[id].weight < 1.0) continue;
-		uchar maxVal = min((uchar)255, layerList[id].maxVal);
-		uchar minVal = max((uchar)1, layerList[id].minVal);
+		for (int k = 0; k < 256; k++) coef[k] = 255.0;
+		if (layerList[0].display != 0)
+		{
+			uchar maxVal = min((uchar)255, layerList[0].maxVal);
+			uchar minVal = max((uchar)1, layerList[0].minVal);
+			uchar grayRange = maxVal - minVal + 1;
+			double percent = layerList[0].percent;
+			double weight = layerList[0].weight;
+			coef[0] = min(coef[0], minVal / weight);
+			for (int k = 1; k < minVal; k++) coef[k] = min(coef[k], minVal / (k * weight));
+			for (int k = minVal; k < maxVal; k++) coef[k] = min(coef[k], ((255.0 - minVal) * pow((1.0 + k - minVal) / grayRange, 1.0 / percent) + minVal) / (k * weight));
+			for (int k = maxVal; k < 256; k++) coef[k] = min(coef[k], 255.0 / (k * weight));
+		}
+		if (layerList[1].display != 0)
+		{
+			uchar maxVal = min((uchar)255, layerList[1].maxVal);
+			uchar minVal = max((uchar)1, layerList[1].minVal);
+			uchar grayRange = maxVal - minVal + 1;
+			double percent = layerList[1].percent;
+			double weight = layerList[1].weight;
+			for (int k = 0; k < minVal; k++) coef[k] = min(coef[k], 0.0);
+			for (int k = minVal; k < maxVal; k++) coef[k] = min(coef[k], maxVal * pow((1.0 + k - minVal) / grayRange, 1.0 / percent) / (k * weight));
+			for (int k = maxVal; k < 256; k++) coef[k] = min(coef[k], 255.0 / (k * weight));
+		}
+		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+		{
+			res.at<Vec3b>(x, y)[0] = layerList[2].matList[d].at<uchar>(x, y);
+			res.at<Vec3b>(x, y)[1] = layerList[1].matList[d].at<uchar>(x, y);
+			res.at<Vec3b>(x, y)[2] = layerList[0].matList[d].at<uchar>(x, y);
+		}
+		Mat temp;
+		cvtColor(res, temp, CV_RGB2GRAY);
+		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+		{
+			double t = coef[temp.at<uchar>(x, y)];
+			if (temp.at<uchar>(x, y) == 0) res.at<Vec3b>(x, y) += Vec3b(1, 1, 1);
+			res.at<Vec3b>(x, y)[0] = (uchar)min(255.0, round(res.at<Vec3b>(x, y)[0] * t));
+			res.at<Vec3b>(x, y)[1] = (uchar)min(255.0, round(res.at<Vec3b>(x, y)[1] * t));
+			res.at<Vec3b>(x, y)[2] = (uchar)min(255.0, round(res.at<Vec3b>(x, y)[2] * t));
+		}
+		temp.release();
+	}
+	else for (size_t i = 0; i < layerList.size(); i++)
+	{
+		if (layerList[i].type > 0 || layerList[i].display == 0) continue;
+		Vec3b pxs[256];
+		uchar maxVal = min((uchar)255, layerList[i].maxVal);
+		uchar minVal = max((uchar)1, layerList[i].minVal);
 		uchar grayRange = maxVal - minVal + 1;
-		double percent = layerList[id].percent;
-		double weight = layerList[id].weight;
+		double percent = layerList[i].percent;
+		double weight = layerList[i].weight;
 		for (int k = 0; k < minVal; k++) coef[k] = 0.0;
-		for (int k = minVal; k < maxVal; k++) coef[k] = weight * min(1.0, pow((1.0 + k - minVal) / grayRange, 1.0 / percent));
-		for (int k = maxVal; k < 256; k++) coef[k] = weight;
+		for (int k = minVal; k < maxVal; k++) coef[k] = weight * pow((1.0 + k - minVal) / grayRange, 1.0 / percent);
+		for (int k = maxVal; k < 256; k++) coef[k] = weight * 255.0;
 		for (int k = 0; k < 256; k++) pxs[k] = layerList[i].color * coef[k];
 		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
 		{
@@ -292,21 +349,45 @@ Mat ImageData::getCell(unsigned int d)
 	Mat res = getImage(d);
 	if (d >= depth || cellLayer.display == 0) return res;
 	int ksize = layerList[nucId].ks;
+	double coef[256];
 	Mat nuc = Mat::zeros(size, CV_8UC1);
 	if (imgMode == 1)
 	{
-		cvtColor(res, nuc, COLOR_RGB2GRAY);
-		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)255 - nuc.at<uchar>(x, y);
+		uchar maxVal = min((uchar)255, layerList[nucId].maxVal);
+		uchar minVal = max((uchar)1, layerList[nucId].minVal);
+		uchar grayRange = maxVal - minVal + 1;
+		double percent = layerList[nucId].percent;
+		for (int k = 0; k < 256; k++) coef[k] = 255.0;
+		if (nucId == 0)
+		{
+			for (int k = 0; k < minVal; k++) coef[k] = minVal;
+			for (int k = minVal; k < maxVal; k++) coef[k] = (255.0 - minVal) * pow((1.0 + k - minVal) / grayRange, 1.0 / percent) + minVal;
+		}
+		if (nucId == 1)
+		{
+			for (int k = 0; k < minVal; k++) coef[k] = 0.0;
+			for (int k = minVal; k < maxVal; k++) coef[k] = maxVal * pow((1.0 + k - minVal) / grayRange, 1.0 / percent);
+		}
+		for (int k = 0; k < 256; k++) coef[k] = 255.0 - coef[k];
+		Mat temp = Mat::zeros(size, CV_8UC3);
+		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+		{
+			temp.at<Vec3b>(x, y)[0] = layerList[2].matList[d].at<uchar>(x, y);
+			temp.at<Vec3b>(x, y)[1] = layerList[1].matList[d].at<uchar>(x, y);
+			temp.at<Vec3b>(x, y)[2] = layerList[0].matList[d].at<uchar>(x, y);
+		}
+		cvtColor(temp, nuc, CV_RGB2GRAY);
+		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)coef[nuc.at<uchar>(x, y)];
+		temp.release();
 	}
 	else
 	{
-		double coef[256];
 		uchar maxVal = min((uchar)255, layerList[nucId].maxVal);
 		uchar minVal = max((uchar)1, layerList[nucId].minVal);
 		uchar grayRange = maxVal - minVal + 1;
 		double percent = layerList[nucId].percent;
 		for (int k = 0; k < minVal; k++) coef[k] = 0.0;
-		for (int k = minVal; k < maxVal; k++) coef[k] = round(255.0 * min(1.0, pow((1.0 + k - minVal) / grayRange, 1.0 / percent)));
+		for (int k = minVal; k < maxVal; k++) coef[k] = round(255.0 * pow((1.0 + k - minVal) / grayRange, 1.0 / percent));
 		for (int k = maxVal; k < 256; k++) coef[k] = 255.0;
 		for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)coef[layerList[nucId].matList[d].at<uchar>(x, y)];
 	}
@@ -314,10 +395,25 @@ Mat ImageData::getCell(unsigned int d)
 	nuc = openOperation(nuc, ksize);
 	nuc = binaryzation(nuc);
 	nuc = openOperation(nuc, ksize);
-	double meanArea = calcMeanArea(nuc, ksize);
-	if (meanArea > ksize) nuc = closeConcaveHull(nuc, meanArea * 2);
+	double ma = calcMeanArea(nuc, ksize);
+	if (ma > ksize) nuc = closeConcaveHull(nuc, ma * 2);
 	nuc = openOperation(nuc, ksize);
-	meanArea = calcMeanArea(nuc, ksize);
+	ma = nuc.at<uchar>(0, 0);
+	for (int x = 0; x < size.height; x++)
+	{
+		for (int y = 0; y < size.width; y++) if (nuc.at<uchar>(x, y) != ma)
+		{
+			ma = nuc.at<uchar>(x, y);
+			break;
+		}
+		if (nuc.at<uchar>(0, 0) != ma) break;
+	}
+	if (nuc.at<uchar>(0, 0) == ma)
+	{
+		nuc.release();
+		return res;
+	}
+	ma = calcMeanArea(nuc, ksize);
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
 	findContours(nuc, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE);
@@ -327,7 +423,7 @@ Mat ImageData::getCell(unsigned int d)
 	{
 		double area = fabs(contourArea(contours[i]));
 		if (hierarchy[i][2] != -1) area -= fabs(contourArea(contours[hierarchy[i][2]]));
-		if (area >= meanArea / 4 && area <= meanArea * 4) drawContours(res, contours, i, cellLayer.color, thk);
+		if (area >= ma / 4 && area <= ma * 4) drawContours(res, contours, i, cellLayer.color, thk);
 		else if (area >= ksize) drawContours(res, contours, i, cellLayer.color / 2, thk);
 	}
 	//if (d < layerList[nucId].pointList.size()) for (auto pos : layerList[nucId].pointList[d]) circle(res, pos, 5, cellLayer.color, -1);
@@ -484,7 +580,7 @@ double ImageData::calcMeanArea(Mat src, int ksize)
 		if (temp > ksize) area.push_back(temp);
 	}
 	if (area.size() == 0) return ksize;
-	sort(area.begin(), area.end());
+	std::sort(area.begin(), area.end());
 	uint bid = area.size() * 50 / 100;
 	uint eid = area.size() * 90 / 100;
 	if (eid == 0) eid = 1;
@@ -497,30 +593,54 @@ double ImageData::calcMeanArea(Mat src, int ksize)
 
 void ImageData::calcCluster(int id)
 {
-	if (size.area() == 0 || id >= layerList.size()) return;
+	if (size.area() == 0 || id >= layerList.size() || (imgMode == 1 && id > 1)) return;
 	uint ksize = layerList[id].ks;
 	layerList[id].resetCluster();
 	vector<vector<ColNode>>(depth).swap(layerList[id].nodeList);
 	vector<vector<Point>>(depth).swap(layerList[id].pointList);
 
 	vector<double> areaList;
+	double coef[256];
 	Mat nuc = Mat::zeros(size, CV_8UC1);
 	for (int d = 0; d < depth; d++)
 	{
 		if (imgMode == 1)
 		{
-			cvtColor(getImage(d), nuc, COLOR_RGB2GRAY);
-			for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)255 - nuc.at<uchar>(x, y);
+			uchar maxVal = min((uchar)255, layerList[id].maxVal);
+			uchar minVal = max((uchar)1, layerList[id].minVal);
+			uchar grayRange = maxVal - minVal + 1;
+			double percent = layerList[id].percent;
+			for (int k = 0; k < 256; k++) coef[k] = 255.0;
+			if (id == 0)
+			{
+				for (int k = 0; k < minVal; k++) coef[k] = minVal;
+				for (int k = minVal; k < maxVal; k++) coef[k] = (255.0 - minVal) * pow((1.0 + k - minVal) / grayRange, 1.0 / percent) + minVal;
+			}
+			if (id == 1)
+			{
+				for (int k = 0; k < minVal; k++) coef[k] = 0.0;
+				for (int k = minVal; k < maxVal; k++) coef[k] = maxVal * pow((1.0 + k - minVal) / grayRange, 1.0 / percent);
+			}
+			for (int k = 0; k < 256; k++) coef[k] = 255.0 - coef[k];
+			Mat temp = Mat::zeros(size, CV_8UC3);
+			for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
+			{
+				temp.at<Vec3b>(x, y)[0] = layerList[2].matList[d].at<uchar>(x, y);
+				temp.at<Vec3b>(x, y)[1] = layerList[1].matList[d].at<uchar>(x, y);
+				temp.at<Vec3b>(x, y)[2] = layerList[0].matList[d].at<uchar>(x, y);
+			}
+			cvtColor(temp, nuc, CV_RGB2GRAY);
+			for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)coef[nuc.at<uchar>(x, y)];
+			temp.release();
 		}
 		else
 		{
-			double coef[256];
 			uchar maxVal = min((uchar)255, layerList[id].maxVal);
 			uchar minVal = max((uchar)1, layerList[id].minVal);
 			uchar grayRange = maxVal - minVal + 1;
 			double percent = layerList[id].percent;
 			for (int k = 0; k < minVal; k++) coef[k] = 0.0;
-			for (int k = minVal; k < maxVal; k++) coef[k] = round(255.0 * min(1.0, pow((1.0 + k - minVal) / grayRange, 1.0 / percent)));
+			for (int k = minVal; k < maxVal; k++) coef[k] = round(255.0 * pow((1.0 + k - minVal) / grayRange, 1.0 / percent));
 			for (int k = maxVal; k < 256; k++) coef[k] = 255.0;
 			for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++) nuc.at<uchar>(x, y) = (uchar)coef[layerList[id].matList[d].at<uchar>(x, y)];
 		}
@@ -531,6 +651,17 @@ void ImageData::calcCluster(int id)
 		double ma = calcMeanArea(nuc, ksize);
 		if (ma > (double)ksize) nuc = closeConcaveHull(nuc, ma * 2);
 		nuc = openOperation(nuc, ksize);
+		ma = nuc.at<uchar>(0, 0);
+		for (int x = 0; x < size.height; x++)
+		{
+			for (int y = 0; y < size.width; y++) if (nuc.at<uchar>(x, y) != ma)
+			{
+				ma = nuc.at<uchar>(x, y);
+				break;
+			}
+			if (nuc.at<uchar>(0, 0) != ma) break;
+		}
+		if (nuc.at<uchar>(0, 0) == ma) continue;
 		ma = calcMeanArea(nuc, ksize);
 		vector<vector<Point>> contours;
 		vector<Vec4i> hierarchy;
@@ -636,12 +767,18 @@ void ImageData::calcType(int ref, int mode)
 		{
 			if (layerList[ref].nodeList[d].size() == 0) continue;
 			da = Mat::zeros(size, CV_32SC1);
-			for (size_t i = 0; i < layerList[ref].nodeList[d].size(); i++) drawContours(da, vector<vector<Point>>(1, layerList[ref].nodeList[d][i].contour), 0, Scalar(layerList[ref].nodeList[d][i].clsId + 1), -1);
+			for (size_t i = 0; i < layerList[ref].nodeList[d].size(); i++)
+			{
+				drawContours(da, vector<vector<Point>>(1, layerList[ref].nodeList[d][i].contour), 0, Scalar(layerList[ref].nodeList[d][i].clsId + 1), -1);
+			}
 			for (size_t id = 0; id < layerList.size(); id++)
 			{
-				if (id == ref || layerList[id].nodeList[d].size() == 0) continue;
+				if (id == ref || layerList[id].nodeList.size() == 0 || layerList[id].nodeList[d].size() == 0) continue;
 				db = Mat::zeros(size, CV_32SC1);
-				for (size_t i = 0; i < layerList[id].nodeList[d].size(); i++) drawContours(db, vector<vector<Point>>(1, layerList[id].nodeList[d][i].contour), 0, Scalar(id + 1), -1);
+				for (size_t i = 0; i < layerList[id].nodeList[d].size(); i++)
+				{
+					drawContours(db, vector<vector<Point>>(1, layerList[id].nodeList[d][i].contour), 0, Scalar(id + 1), -1);
+				}
 				for (int x = 0; x < size.height; x++) for (int y = 0; y < size.width; y++)
 				{
 					if (da.at<uint>(x, y) == 0 || db.at<uint>(x, y) == 0) continue;
@@ -702,32 +839,6 @@ vector<TypeInfo> ImageData::calcTypeInfo(int ref, Rect roi)
 		infoList[0].degree = 0;
 		infoList[0].area = 0;
 		infoList[0].count = 0;
-		return infoList;
-	}
-	else if (imgMode == 1)
-	{
-		vector<TypeInfo> infoList(1);
-		infoList[0].type = "-";
-		infoList[0].name = "-";
-		infoList[0].degree = 0;
-		infoList[0].area = 0;
-		infoList[0].count = 0;
-		vector<double> areaList;
-		for (map<uint, ColCluster>::iterator it = layerList[ref].clusterList.begin(); it != layerList[ref].clusterList.end(); it++)
-		{
-			double area = it->second.getArea();
-			uint height = it->second.getHeight();
-			Point3i pos = it->second.getPos();
-			if (area < layerList[ref].meanArea / 4 || area > layerList[ref].meanArea * 4 || height > depth - 1) continue;
-			if (pos.x < roi.x || pos.x > roi.x + roi.width || pos.y < roi.y || pos.y > roi.y + roi.height) continue;
-			infoList[0].count++;
-			areaList.push_back(area);
-		}
-		if (areaList.size() > 0)
-		{
-			for (auto t : areaList) infoList[0].area += t;
-			infoList[0].area = infoList[0].area / areaList.size();
-		}
 		return infoList;
 	}
 

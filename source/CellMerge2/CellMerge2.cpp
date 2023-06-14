@@ -7,7 +7,7 @@ CellMerge2::CellMerge2(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-	version = QStringLiteral("1.8");
+	version = QStringLiteral("1.9");
 	setWindowTitle(QStringLiteral("CellMerge2  v%1").arg(version));
 	setContextMenuPolicy(Qt::NoContextMenu);
 	setMouseTracking(true);
@@ -295,10 +295,15 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	if (imageData.imgMode == 1)
 	{
 		imageData.nucId = 0;
-		imageData.layerList[0].name = "BrightField";
+		imageData.layerList[0].name = "BF_Low";
+		imageData.layerList[1].name = "BF_High";
+		imageData.layerList[0].minVal = 128;
+		imageData.layerList[1].maxVal = 128;
 		ui.selectBox->addItem(QString::fromStdString(imageData.layerList[0].name));
+		ui.selectBox->addItem(QString::fromStdString(imageData.layerList[1].name));
 		ui.selectBox->setCurrentIndex(0);
 		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
+		imageData.cellLayer.ori = Vec3b(255, 0, 0);
 		imageData.cellLayer.color = Vec3b(255, 0, 0);
 	}
 	else
@@ -360,10 +365,15 @@ int CellMerge2::loadSeries(QStringList fileNames)
 	if (imageData.imgMode == 1)
 	{
 		imageData.nucId = 0;
-		imageData.layerList[0].name = "BrightField";
+		imageData.layerList[0].name = "BF_low";
+		imageData.layerList[1].name = "BF_High";
+		imageData.layerList[0].minVal = 128;
+		imageData.layerList[1].maxVal = 128;
 		ui.selectBox->addItem(QString::fromStdString(imageData.layerList[0].name));
+		ui.selectBox->addItem(QString::fromStdString(imageData.layerList[1].name));
 		ui.selectBox->setCurrentIndex(0);
 		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
+		imageData.cellLayer.ori = Vec3b(255, 0, 0);
 		imageData.cellLayer.color = Vec3b(255, 0, 0);
 	}
 	else
@@ -725,7 +735,23 @@ void CellMerge2::calcHist()
 {
 	if (ui.selectBox->count() > 0 && ui.selectBox->currentIndex() < imageData.layerList.size() && ui.depthSlider->value() < imageData.depth)
 	{
-		ui.levelSetting->calcHist(&imageData.layerList[ui.selectBox->currentIndex()].matList[ui.depthSlider->value()]);
+		if (imageData.imgMode == 1)
+		{
+			Mat img = Mat::zeros(imageData.size, CV_8UC3);
+			int d = ui.depthSlider->value();
+			for (int x = 0; x < imageData.size.height; x++) for (int y = 0; y < imageData.size.width; y++)
+			{
+				img.at<Vec3b>(x, y)[0] = imageData.layerList[2].matList[d].at<uchar>(x, y);
+				img.at<Vec3b>(x, y)[1] = imageData.layerList[1].matList[d].at<uchar>(x, y);
+				img.at<Vec3b>(x, y)[2] = imageData.layerList[0].matList[d].at<uchar>(x, y);
+			}
+			Mat temp;
+			cvtColor(img, temp, COLOR_RGB2GRAY);
+			ui.levelSetting->calcHist(&temp);
+			img.release();
+			temp.release();
+		}
+		else ui.levelSetting->calcHist(&imageData.layerList[ui.selectBox->currentIndex()].matList[ui.depthSlider->value()]);
 	}
 	else ui.levelSetting->initial();
 }
@@ -1109,7 +1135,12 @@ void CellMerge2::statShowFunc()
 	if (imageData.layerList.size() == 0 || ui.selectBox->count() == 0) return;
 	statForm.close();
 	statForm.layerBox->clear();
-	for (size_t i = 0; i < imageData.layerList.size(); i++) statForm.layerBox->addItem(QString::fromStdString(imageData.layerList[i].name));
+	if (imageData.imgMode == 1)
+	{
+		statForm.layerBox->addItem(QString::fromStdString(imageData.layerList[0].name));
+		statForm.layerBox->addItem(QString::fromStdString(imageData.layerList[1].name));
+	}
+	else for (size_t i = 0; i < imageData.layerList.size(); i++) statForm.layerBox->addItem(QString::fromStdString(imageData.layerList[i].name));
 	statForm.layerBox->setCurrentIndex(imageData.nucId);
 	statForm.layerBox->setToolTip(QString::fromStdString(imageData.layerList[imageData.nucId].name));
 	statForm.show();
@@ -1140,8 +1171,11 @@ void CellMerge2::statCalcFunc()
 			relRoi.height = imageData.size.height;
 		}
 	}
-	for (int i = 0; i < imageData.layerList.size(); i++) imageData.calcCluster(i);
 	uint ref = statForm.layerBox->currentIndex();
+	for (int i = 0; i < imageData.layerList.size(); i++)
+	{
+		if (i != ref && imageData.layerList[i].display == 0) imageData.layerList[i].resetCluster(); else imageData.calcCluster(i);
+	}
 	imageData.calcType(ref, statForm.modeBox->currentIndex());
 	vector<TypeInfo> infoList = imageData.calcTypeInfo(ref, relRoi);
 	statForm.clearForm();
