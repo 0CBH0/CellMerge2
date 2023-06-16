@@ -88,6 +88,8 @@ private slots:
 	void selDepthFunc(int value);
 	void setRoiFunc();
 	void resetRoiFunc();
+	void dpMinFunc();
+	void dpMaxFunc();
 	void setNameFunc();
 	void setColorFunc();
 	void setLimitValue(int minValue, double midValue, int maxValue);

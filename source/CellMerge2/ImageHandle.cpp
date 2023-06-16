@@ -198,6 +198,8 @@ void ImageData::initial(string n, Size s, unsigned int d)
 	depth = d;
 	nucId = 0;
 	imgMode = 0;
+	dpMin = 0;
+	dpMax = 0;
 	cellLayer.initial("Cell", Vec3b(255, 255, 255), s, 0, 1);
 }
 
@@ -418,7 +420,8 @@ Mat ImageData::getCell(unsigned int d)
 	vector<Vec4i> hierarchy;
 	findContours(nuc, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE);
 	if (contours.size() == 0) return res;
-	int thk = max(1, max(size.width, size.height) / 1000);
+	//int thk = max(1, max(size.width, size.height) / 1000);
+	int thk = 1;
 	for (size_t i = 0; i < contours.size(); i++) if (hierarchy[i][3] == -1)
 	{
 		double area = fabs(contourArea(contours[i]));
@@ -602,7 +605,7 @@ void ImageData::calcCluster(int id)
 	vector<double> areaList;
 	double coef[256];
 	Mat nuc = Mat::zeros(size, CV_8UC1);
-	for (int d = 0; d < depth; d++)
+	for (int d = dpMin; d <= dpMax; d++)
 	{
 		if (imgMode == 1)
 		{
@@ -690,7 +693,7 @@ void ImageData::calcCluster(int id)
 		layerList[id].clusterList.at(clsCount).addNode(&layerList[id].nodeList[0][i]);
 		clsCount++;
 	}
-	else for (size_t d = 0; d < depth - 1; d++)
+	else for (size_t d = dpMin; d < dpMax; d++)
 	{
 		if (layerList[id].nodeList[d].size() == 0) continue;
 		da = Mat::zeros(size, CV_32SC1);
@@ -763,7 +766,7 @@ void ImageData::calcType(int ref, int mode)
 		{
 			countList.insert(pair<uint, map<uint, uint>>(i->second.id, map<uint, uint>()));
 		}
-		for (size_t d = 0; d < depth; d++)
+		for (size_t d = dpMin; d <= dpMax; d++)
 		{
 			if (layerList[ref].nodeList[d].size() == 0) continue;
 			da = Mat::zeros(size, CV_32SC1);
@@ -800,7 +803,7 @@ void ImageData::calcType(int ref, int mode)
 	{
 		Point3d pa, pb;
 		double dstLim = sqrt(layerList[ref].meanArea) * 2 / 3;
-		double hiRate = sqrt(layerList[ref].meanArea) / max(1.0, min(layerList[ref].meanHeight, depth / 2.0));
+		double hiRate = sqrt(layerList[ref].meanArea) / max(1.0, min(layerList[ref].meanHeight, (dpMax - dpMin + 1) / 2.0));
 		double scale = 1.0;
 		if (mode == 2) scale = 2.0;
 		if (mode == 3) scale = 0.5;

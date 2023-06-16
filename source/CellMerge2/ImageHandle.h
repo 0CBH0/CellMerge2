@@ -129,6 +129,8 @@ public:
 	unsigned int depth;
 	unsigned int nucId;
 	unsigned int imgMode;
+	unsigned int dpMin;
+	unsigned int dpMax;
 	std::vector<LayerData> layerList;
 	LayerData cellLayer;
 };

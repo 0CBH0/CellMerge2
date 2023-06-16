@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_CellMerge2_t {
-    QByteArrayData data[40];
-    char stringdata0[369];
+    QByteArrayData data[42];
+    char stringdata0[389];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -57,20 +57,22 @@ QT_MOC_LITERAL(22, 156, 12), // "selDepthFunc"
 QT_MOC_LITERAL(23, 169, 5), // "value"
 QT_MOC_LITERAL(24, 175, 10), // "setRoiFunc"
 QT_MOC_LITERAL(25, 186, 12), // "resetRoiFunc"
-QT_MOC_LITERAL(26, 199, 11), // "setNameFunc"
-QT_MOC_LITERAL(27, 211, 12), // "setColorFunc"
-QT_MOC_LITERAL(28, 224, 13), // "setLimitValue"
-QT_MOC_LITERAL(29, 238, 8), // "minValue"
-QT_MOC_LITERAL(30, 247, 8), // "midValue"
-QT_MOC_LITERAL(31, 256, 8), // "maxValue"
-QT_MOC_LITERAL(32, 265, 13), // "setWeightFunc"
-QT_MOC_LITERAL(33, 279, 11), // "displayFunc"
-QT_MOC_LITERAL(34, 291, 12), // "selLayerFunc"
-QT_MOC_LITERAL(35, 304, 10), // "modeChange"
-QT_MOC_LITERAL(36, 315, 14), // "resetLayerFunc"
-QT_MOC_LITERAL(37, 330, 12), // "statShowFunc"
-QT_MOC_LITERAL(38, 343, 12), // "statHideFunc"
-QT_MOC_LITERAL(39, 356, 12) // "statCalcFunc"
+QT_MOC_LITERAL(26, 199, 9), // "dpMinFunc"
+QT_MOC_LITERAL(27, 209, 9), // "dpMaxFunc"
+QT_MOC_LITERAL(28, 219, 11), // "setNameFunc"
+QT_MOC_LITERAL(29, 231, 12), // "setColorFunc"
+QT_MOC_LITERAL(30, 244, 13), // "setLimitValue"
+QT_MOC_LITERAL(31, 258, 8), // "minValue"
+QT_MOC_LITERAL(32, 267, 8), // "midValue"
+QT_MOC_LITERAL(33, 276, 8), // "maxValue"
+QT_MOC_LITERAL(34, 285, 13), // "setWeightFunc"
+QT_MOC_LITERAL(35, 299, 11), // "displayFunc"
+QT_MOC_LITERAL(36, 311, 12), // "selLayerFunc"
+QT_MOC_LITERAL(37, 324, 10), // "modeChange"
+QT_MOC_LITERAL(38, 335, 14), // "resetLayerFunc"
+QT_MOC_LITERAL(39, 350, 12), // "statShowFunc"
+QT_MOC_LITERAL(40, 363, 12), // "statHideFunc"
+QT_MOC_LITERAL(41, 376, 12) // "statCalcFunc"
 
     },
     "CellMerge2\0initial\0\0release\0refreshView\0"
@@ -78,11 +80,12 @@ QT_MOC_LITERAL(39, 356, 12) // "statCalcFunc"
     "exportFunc\0aboutFunc\0scrollFunc\0x\0y\0"
     "val\0moveFunc\0xa\0ya\0xb\0yb\0drawRoiFunc\0"
     "selRoiFunc\0selDepthFunc\0value\0setRoiFunc\0"
-    "resetRoiFunc\0setNameFunc\0setColorFunc\0"
-    "setLimitValue\0minValue\0midValue\0"
-    "maxValue\0setWeightFunc\0displayFunc\0"
-    "selLayerFunc\0modeChange\0resetLayerFunc\0"
-    "statShowFunc\0statHideFunc\0statCalcFunc"
+    "resetRoiFunc\0dpMinFunc\0dpMaxFunc\0"
+    "setNameFunc\0setColorFunc\0setLimitValue\0"
+    "minValue\0midValue\0maxValue\0setWeightFunc\0"
+    "displayFunc\0selLayerFunc\0modeChange\0"
+    "resetLayerFunc\0statShowFunc\0statHideFunc\0"
+    "statCalcFunc"
 };
 #undef QT_MOC_LITERAL
 
@@ -92,7 +95,7 @@ static const uint qt_meta_data_CellMerge2[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      27,   14, // methods
+      29,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -100,33 +103,35 @@ static const uint qt_meta_data_CellMerge2[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  149,    2, 0x08 /* Private */,
-       3,    0,  150,    2, 0x08 /* Private */,
-       4,    1,  151,    2, 0x08 /* Private */,
-       4,    0,  154,    2, 0x28 /* Private | MethodCloned */,
-       6,    0,  155,    2, 0x08 /* Private */,
-       7,    0,  156,    2, 0x08 /* Private */,
-       8,    0,  157,    2, 0x08 /* Private */,
-       9,    0,  158,    2, 0x08 /* Private */,
-      10,    0,  159,    2, 0x08 /* Private */,
-      11,    3,  160,    2, 0x08 /* Private */,
-      15,    4,  167,    2, 0x08 /* Private */,
-      20,    4,  176,    2, 0x08 /* Private */,
-      21,    4,  185,    2, 0x08 /* Private */,
-      22,    1,  194,    2, 0x08 /* Private */,
-      24,    0,  197,    2, 0x08 /* Private */,
-      25,    0,  198,    2, 0x08 /* Private */,
-      26,    0,  199,    2, 0x08 /* Private */,
-      27,    0,  200,    2, 0x08 /* Private */,
-      28,    3,  201,    2, 0x08 /* Private */,
-      32,    1,  208,    2, 0x08 /* Private */,
-      33,    1,  211,    2, 0x08 /* Private */,
-      34,    1,  214,    2, 0x08 /* Private */,
-      35,    0,  217,    2, 0x08 /* Private */,
-      36,    0,  218,    2, 0x08 /* Private */,
-      37,    0,  219,    2, 0x08 /* Private */,
-      38,    0,  220,    2, 0x08 /* Private */,
-      39,    0,  221,    2, 0x08 /* Private */,
+       1,    0,  159,    2, 0x08 /* Private */,
+       3,    0,  160,    2, 0x08 /* Private */,
+       4,    1,  161,    2, 0x08 /* Private */,
+       4,    0,  164,    2, 0x28 /* Private | MethodCloned */,
+       6,    0,  165,    2, 0x08 /* Private */,
+       7,    0,  166,    2, 0x08 /* Private */,
+       8,    0,  167,    2, 0x08 /* Private */,
+       9,    0,  168,    2, 0x08 /* Private */,
+      10,    0,  169,    2, 0x08 /* Private */,
+      11,    3,  170,    2, 0x08 /* Private */,
+      15,    4,  177,    2, 0x08 /* Private */,
+      20,    4,  186,    2, 0x08 /* Private */,
+      21,    4,  195,    2, 0x08 /* Private */,
+      22,    1,  204,    2, 0x08 /* Private */,
+      24,    0,  207,    2, 0x08 /* Private */,
+      25,    0,  208,    2, 0x08 /* Private */,
+      26,    0,  209,    2, 0x08 /* Private */,
+      27,    0,  210,    2, 0x08 /* Private */,
+      28,    0,  211,    2, 0x08 /* Private */,
+      29,    0,  212,    2, 0x08 /* Private */,
+      30,    3,  213,    2, 0x08 /* Private */,
+      34,    1,  220,    2, 0x08 /* Private */,
+      35,    1,  223,    2, 0x08 /* Private */,
+      36,    1,  226,    2, 0x08 /* Private */,
+      37,    0,  229,    2, 0x08 /* Private */,
+      38,    0,  230,    2, 0x08 /* Private */,
+      39,    0,  231,    2, 0x08 /* Private */,
+      40,    0,  232,    2, 0x08 /* Private */,
+      41,    0,  233,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -147,7 +152,9 @@ static const uint qt_meta_data_CellMerge2[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::Double, QMetaType::Int,   29,   30,   31,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::Double, QMetaType::Int,   31,   32,   33,
     QMetaType::Void, QMetaType::Int,   23,
     QMetaType::Void, QMetaType::Int,   23,
     QMetaType::Void, QMetaType::Int,   23,
@@ -182,17 +189,19 @@ void CellMerge2::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 13: _t->selDepthFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 14: _t->setRoiFunc(); break;
         case 15: _t->resetRoiFunc(); break;
-        case 16: _t->setNameFunc(); break;
-        case 17: _t->setColorFunc(); break;
-        case 18: _t->setLimitValue((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
-        case 19: _t->setWeightFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 20: _t->displayFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 21: _t->selLayerFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 22: _t->modeChange(); break;
-        case 23: _t->resetLayerFunc(); break;
-        case 24: _t->statShowFunc(); break;
-        case 25: _t->statHideFunc(); break;
-        case 26: _t->statCalcFunc(); break;
+        case 16: _t->dpMinFunc(); break;
+        case 17: _t->dpMaxFunc(); break;
+        case 18: _t->setNameFunc(); break;
+        case 19: _t->setColorFunc(); break;
+        case 20: _t->setLimitValue((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 21: _t->setWeightFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 22: _t->displayFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 23: _t->selLayerFunc((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 24: _t->modeChange(); break;
+        case 25: _t->resetLayerFunc(); break;
+        case 26: _t->statShowFunc(); break;
+        case 27: _t->statHideFunc(); break;
+        case 28: _t->statCalcFunc(); break;
         default: ;
         }
     }
@@ -223,13 +232,13 @@ int CellMerge2::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 27)
+        if (_id < 29)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 27;
+        _id -= 29;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 27)
+        if (_id < 29)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 27;
+        _id -= 29;
     }
     return _id;
 }

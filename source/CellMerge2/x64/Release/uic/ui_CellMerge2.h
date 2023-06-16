@@ -50,7 +50,11 @@ public:
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
     ClickQLabel *mainForm;
+    QVBoxLayout *verticalLayout;
+    QLabel *label_3;
+    QLineEdit *dpMinBox;
     QSlider *depthSlider;
+    QLineEdit *dpMaxBox;
     QFrame *line;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_2;
@@ -118,16 +122,52 @@ public:
 
         horizontalLayout->addWidget(mainForm);
 
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(6);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        label_3 = new QLabel(centralWidget);
+        label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setMinimumSize(QSize(28, 20));
+        label_3->setMaximumSize(QSize(28, 20));
+        label_3->setAlignment(Qt::AlignCenter);
+
+        verticalLayout->addWidget(label_3);
+
+        dpMinBox = new QLineEdit(centralWidget);
+        dpMinBox->setObjectName(QStringLiteral("dpMinBox"));
+        dpMinBox->setMinimumSize(QSize(28, 20));
+        dpMinBox->setMaximumSize(QSize(28, 20));
+        dpMinBox->setMaxLength(32767);
+        dpMinBox->setAlignment(Qt::AlignCenter);
+
+        verticalLayout->addWidget(dpMinBox);
+
         depthSlider = new QSlider(centralWidget);
         depthSlider->setObjectName(QStringLiteral("depthSlider"));
-        depthSlider->setMinimumSize(QSize(25, 0));
+        depthSlider->setMinimumSize(QSize(28, 0));
+        depthSlider->setMaximumSize(QSize(28, 16777215));
         depthSlider->setPageStep(1);
         depthSlider->setValue(0);
         depthSlider->setOrientation(Qt::Vertical);
         depthSlider->setInvertedAppearance(true);
         depthSlider->setInvertedControls(true);
 
-        horizontalLayout->addWidget(depthSlider);
+        verticalLayout->addWidget(depthSlider);
+
+        dpMaxBox = new QLineEdit(centralWidget);
+        dpMaxBox->setObjectName(QStringLiteral("dpMaxBox"));
+        dpMaxBox->setMinimumSize(QSize(28, 20));
+        dpMaxBox->setMaximumSize(QSize(28, 20));
+        dpMaxBox->setAlignment(Qt::AlignCenter);
+
+        verticalLayout->addWidget(dpMaxBox);
+
+        verticalLayout->setStretch(0, 1);
+        verticalLayout->setStretch(1, 1);
+        verticalLayout->setStretch(2, 500);
+        verticalLayout->setStretch(3, 1);
+
+        horizontalLayout->addLayout(verticalLayout);
 
         line = new QFrame(centralWidget);
         line->setObjectName(QStringLiteral("line"));
@@ -299,7 +339,6 @@ public:
         horizontalLayout->addLayout(verticalLayout_2);
 
         horizontalLayout->setStretch(0, 200);
-        horizontalLayout->setStretch(1, 2);
         horizontalLayout->setStretch(2, 1);
         horizontalLayout->setStretch(3, 2);
 
@@ -332,6 +371,11 @@ public:
         actionReset_Layer->setText(QApplication::translate("CellMerge2Class", "\350\277\230\345\216\237\345\261\202", Q_NULLPTR));
         actionExport->setText(QApplication::translate("CellMerge2Class", "\345\257\274\345\207\272", Q_NULLPTR));
         mainForm->setText(QString());
+        label_3->setText(QApplication::translate("CellMerge2Class", "\345\261\202", Q_NULLPTR));
+        dpMinBox->setInputMask(QString());
+        dpMinBox->setText(QApplication::translate("CellMerge2Class", "0", Q_NULLPTR));
+        dpMaxBox->setInputMask(QString());
+        dpMaxBox->setText(QApplication::translate("CellMerge2Class", "0", Q_NULLPTR));
         label->setText(QApplication::translate("CellMerge2Class", "\345\214\272\345\237\237", Q_NULLPTR));
         roiButton->setText(QApplication::translate("CellMerge2Class", "\345\244\215\344\275\215", Q_NULLPTR));
         label_2->setText(QApplication::translate("CellMerge2Class", "\351\200\232\351\201\223", Q_NULLPTR));

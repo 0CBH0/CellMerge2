@@ -16,11 +16,17 @@ CellMerge2::CellMerge2(QWidget *parent)
 	colorDialog = new QColorDialog;
 	statusMsgLabel = new QLabel;
 	ui.statusBar->addWidget(statusMsgLabel);
+	QRegExp dpLimitExp("[0-9]+");
+	ui.dpMinBox->setValidator(new QRegExpValidator(dpLimitExp));
+	ui.dpMaxBox->setValidator(new QRegExpValidator(dpLimitExp));
 
 	connect(ui.mainForm, SIGNAL(scrolled(int, int, int)), this, SLOT(scrollFunc(int, int, int)));
 	connect(ui.mainForm, SIGNAL(moved(int, int, int, int)), this, SLOT(moveFunc(int, int, int, int)));
 	connect(ui.mainForm, SIGNAL(selecting(int, int, int, int)), this, SLOT(drawRoiFunc(int, int, int, int)));
 	connect(ui.mainForm, SIGNAL(selected(int, int, int, int)), this, SLOT(selRoiFunc(int, int, int, int)));
+	connect(ui.dpMinBox, SIGNAL(editingFinished()), this, SLOT(dpMinFunc()));
+	connect(ui.dpMaxBox, SIGNAL(editingFinished()), this, SLOT(dpMaxFunc()));
+	connect(ui.nameEdit, SIGNAL(editingFinished()), this, SLOT(setNameFunc()));
 	connect(ui.depthSlider, SIGNAL(valueChanged(int)), this, SLOT(selDepthFunc(int)));
 	connect(ui.roiEdit, SIGNAL(editingFinished()), this, SLOT(setRoiFunc()));
 	connect(ui.roiButton, SIGNAL(clicked()), this, SLOT(resetRoiFunc()));
@@ -50,6 +56,8 @@ void CellMerge2::initial()
 	projectName = "";
 	roi = Rect(0, 0, 0, 0);
 	imageData.initial();
+	ui.dpMinBox->setText("0");
+	ui.dpMaxBox->setText("0");
 	ui.depthSlider->setRange(0, 0);
 	ui.depthSlider->setValue(0);
 	ui.weightSlider->setRange(0, 100);
@@ -257,6 +265,8 @@ void CellMerge2::importFunc()
 void CellMerge2::exportFunc()
 {
 	if (imageData.layerList.size() == 0) return;
+	if (projectName == "") saveFunc();
+	if (projectName == "") return;
 	QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("选择导出图像位置..."));
 	if (dirName == "") return;
 	disableWidget(true);
@@ -289,8 +299,10 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	roi = Rect(0, 0, imageData.size.width, imageData.size.height);
 	setMode(0);
 	disableWidget(false);
+	ui.dpMinBox->setText(QString::number(imageData.dpMin));
+	ui.dpMaxBox->setText(QString::number(imageData.dpMax));
 	ui.depthSlider->setRange(0, imageData.depth - 1);
-	ui.depthSlider->setValue(0);
+	ui.depthSlider->setValue(imageData.dpMin);
 	ui.selectBox->clear();
 	if (imageData.imgMode == 1)
 	{
@@ -315,6 +327,7 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	setWidget(0);
 	calcHist();
 	refreshView(true);
+	statForm.clearForm();
 	return res;
 }
 
@@ -359,8 +372,10 @@ int CellMerge2::loadSeries(QStringList fileNames)
 	roi = Rect(0, 0, imageData.size.width, imageData.size.height);
 	setMode(0);
 	disableWidget(false);
+	ui.dpMinBox->setText(QString::number(imageData.dpMin));
+	ui.dpMaxBox->setText(QString::number(imageData.dpMax));
 	ui.depthSlider->setRange(0, imageData.depth - 1);
-	ui.depthSlider->setValue(0);
+	ui.depthSlider->setValue(imageData.dpMin);
 	ui.selectBox->clear();
 	if (imageData.imgMode == 1)
 	{
@@ -385,6 +400,7 @@ int CellMerge2::loadSeries(QStringList fileNames)
 	setWidget(0);
 	calcHist();
 	refreshView(true);
+	statForm.clearForm();
 	return 0;
 }
 
@@ -415,6 +431,10 @@ int CellMerge2::readCMR(QString fileName)
 	imageData.size.height = ia;
 	fread(&ia, 4, 1, cmr);
 	imageData.depth = ia;
+	fread(&ia, 4, 1, cmr);
+	imageData.dpMin = ia;
+	fread(&ia, 4, 1, cmr);
+	imageData.dpMax = ia;
 	fread(&ia, 4, 1, cmr);
 	imageData.nucId = ia;
 	fread(&ia, 4, 1, cmr);
@@ -474,6 +494,10 @@ int CellMerge2::writeCMR(QString fileName)
 	ia = imageData.size.height;
 	fwrite(&ia, 4, 1, cmr);
 	ia = imageData.depth;
+	fwrite(&ia, 4, 1, cmr);
+	ia = imageData.dpMin;
+	fwrite(&ia, 4, 1, cmr);
+	ia = imageData.dpMax;
 	fwrite(&ia, 4, 1, cmr);
 	ia = imageData.nucId;
 	fwrite(&ia, 4, 1, cmr);
@@ -683,6 +707,8 @@ int CellMerge2::readLIF(QString fileName)
 		string name = itemSelector.itemBox->currentText().toStdString() + "_";
 		imageData.size = Size(dimList[id][0], dimList[id][1]);
 		imageData.depth = dimList[id][2];
+		imageData.dpMin = 0;
+		imageData.dpMax = imageData.depth - 1;
 		for (size_t i = 0; i < channelList[id].size(); i++)
 		{
 			if (channelList[id][i] == "Blue") imageData.nucId = i;
@@ -715,6 +741,8 @@ int CellMerge2::readIMG(QString fileName)
 	imageData.release();
 	imageData.size = Size(img.cols, img.rows);
 	imageData.depth = 1;
+	imageData.dpMin = 0;
+	imageData.dpMax = 0;
 	imageData.addLayer("Blue", Vec3b(0, 0, 255));
 	imageData.layerList[0].matList[0] = chs[0].clone();
 	imageData.normalize(0, 0);
@@ -971,7 +999,16 @@ void CellMerge2::selRoiFunc(int xa, int ya, int xb, int yb)
 
 void CellMerge2::selDepthFunc(int value)
 {
-	if (imageData.depth <= value) return;
+	if (value < imageData.dpMin)
+	{
+		ui.depthSlider->setValue(imageData.dpMin);
+		return;
+	}
+	else if (value > imageData.dpMax)
+	{
+		ui.depthSlider->setValue(imageData.dpMax);
+		return;
+	}
 	calcHist();
 	refreshView(true);
 }
@@ -1006,6 +1043,30 @@ void CellMerge2::resetRoiFunc()
 	}
 	roi = Rect(0, 0, imageData.size.width, imageData.size.height);
 	refreshView();
+}
+
+void CellMerge2::dpMinFunc()
+{
+	uint val = ui.dpMinBox->text().toInt();
+	if (val >= imageData.depth || val > ui.dpMaxBox->text().toInt())
+	{
+		ui.dpMinBox->setText(QString::number(imageData.dpMin));
+		return;
+	}
+	imageData.dpMin = val;
+	if (ui.depthSlider->value() < val) ui.depthSlider->setValue(val);
+}
+
+void CellMerge2::dpMaxFunc()
+{
+	uint val = ui.dpMaxBox->text().toInt();
+	if (val >= imageData.depth || val < ui.dpMinBox->text().toInt())
+	{
+		ui.dpMaxBox->setText(QString::number(imageData.dpMax));
+		return;
+	}
+	imageData.dpMax = val;
+	if (ui.depthSlider->value() > val) ui.depthSlider->setValue(val);
 }
 
 void CellMerge2::setNameFunc()
