@@ -152,10 +152,10 @@ public:
         modeBox->clear();
         modeBox->insertItems(0, QStringList()
          << QApplication::translate("StatForm", "\345\214\205\345\220\253", Q_NULLPTR)
-         << QApplication::translate("StatForm", "\350\267\235\347\246\273", Q_NULLPTR)
-         << QApplication::translate("StatForm", "2\345\200\215\350\267\235\347\246\273", Q_NULLPTR)
-         << QApplication::translate("StatForm", "1/2\345\200\215\350\267\235\347\246\273", Q_NULLPTR)
-         << QApplication::translate("StatForm", "1/4\345\200\215\350\267\235\347\246\273", Q_NULLPTR)
+         << QApplication::translate("StatForm", "2.0\345\200\215\345\215\212\345\276\204", Q_NULLPTR)
+         << QApplication::translate("StatForm", "1.5\345\200\215\345\215\212\345\276\204", Q_NULLPTR)
+         << QApplication::translate("StatForm", "1.0\345\200\215\345\215\212\345\276\204", Q_NULLPTR)
+         << QApplication::translate("StatForm", "0.5\345\200\215\350\267\235\347\246\273", Q_NULLPTR)
         );
         roiBox->setText(QApplication::translate("StatForm", "\345\275\223\345\211\215\345\214\272\345\237\237", Q_NULLPTR));
         calcButton->setText(QApplication::translate("StatForm", "\350\256\241\347\256\227", Q_NULLPTR));

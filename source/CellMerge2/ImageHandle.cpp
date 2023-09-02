@@ -143,7 +143,7 @@ void LayerData::initial(string n, Vec3b c, Size s, unsigned int d, unsigned char
 	maxVal = 255;
 	minVal = 1;
 	percent = 1.0;
-	display = 1;
+	display = 2;
 	weight = 1.0;
 	meanArea = 0.0;
 	meanHeight = 0.0;
@@ -201,6 +201,7 @@ void ImageData::initial(string n, Size s, unsigned int d)
 	dpMin = 0;
 	dpMax = 0;
 	cellLayer.initial("Cell", Vec3b(255, 255, 255), s, 0, 1);
+	cellLayer.display = 1;
 }
 
 void ImageData::release()
@@ -259,7 +260,7 @@ void ImageData::resetLayer(unsigned int id)
 	layerList[id].percent = 1.0;
 	layerList[id].weight = 1.0;
 	layerList[id].color = layerList[id].ori;
-	layerList[id].display = 1;
+	layerList[id].display = 2;
 }
 
 void ImageData::resetCellLayer()
@@ -281,7 +282,7 @@ Mat ImageData::getImage(unsigned int d)
 	if (imgMode == 1)
 	{
 		for (int k = 0; k < 256; k++) coef[k] = 255.0;
-		if (layerList[0].display != 0)
+		if (layerList[0].display != 0 && (layerList[1].display != 1 || nucId != 1))
 		{
 			uchar maxVal = min((uchar)255, layerList[0].maxVal);
 			uchar minVal = max((uchar)1, layerList[0].minVal);
@@ -293,7 +294,7 @@ Mat ImageData::getImage(unsigned int d)
 			for (int k = minVal; k < maxVal; k++) coef[k] = min(coef[k], ((255.0 - minVal) * pow((1.0 + k - minVal) / grayRange, 1.0 / percent) + minVal) / (k * weight));
 			for (int k = maxVal; k < 256; k++) coef[k] = min(coef[k], 255.0 / (k * weight));
 		}
-		if (layerList[1].display != 0)
+		if (layerList[1].display != 0 && (layerList[0].display != 1 || nucId != 0))
 		{
 			uchar maxVal = min((uchar)255, layerList[1].maxVal);
 			uchar minVal = max((uchar)1, layerList[1].minVal);
@@ -324,7 +325,7 @@ Mat ImageData::getImage(unsigned int d)
 	}
 	else for (size_t i = 0; i < layerList.size(); i++)
 	{
-		if (layerList[i].type > 0 || layerList[i].display == 0) continue;
+		if (layerList[i].type > 0 || layerList[i].display == 0 || (layerList[nucId].display == 1 && i != nucId)) continue;
 		Vec3b pxs[256];
 		uchar maxVal = min((uchar)255, layerList[i].maxVal);
 		uchar minVal = max((uchar)1, layerList[i].minVal);
@@ -398,6 +399,7 @@ Mat ImageData::getCell(unsigned int d)
 	nuc = binaryzation(nuc);
 	nuc = openOperation(nuc, ksize);
 	double ma = calcMeanArea(nuc, ksize);
+	if (ma == 0 || ma > size.area()*2.0 / 3.0) return res;
 	if (ma > ksize) nuc = closeConcaveHull(nuc, ma * 2);
 	nuc = openOperation(nuc, ksize);
 	ma = nuc.at<uchar>(0, 0);
@@ -415,11 +417,11 @@ Mat ImageData::getCell(unsigned int d)
 		nuc.release();
 		return res;
 	}
-	ma = calcMeanArea(nuc, ksize);
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
 	findContours(nuc, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE);
-	if (contours.size() == 0) return res;
+	if (contours.size() == 0 || contours.size() > 10000) return res;
+	ma = calcMeanArea(nuc, ksize);
 	//int thk = max(1, max(size.width, size.height) / 1000);
 	int thk = 1;
 	for (size_t i = 0; i < contours.size(); i++) if (hierarchy[i][3] == -1)
@@ -440,10 +442,10 @@ Vec3b ImageData::name2col(string name)
 	if (name == "Cyan") col = { 0, 255, 255 };
 	else if (name == "Magenta") col = { 255, 0, 255 };
 	else if (name == "Yellow") col = { 255, 255, 0 };
-	else if (name == "Gray") col = { 160, 160, 160 };
 	else if (name == "Red") col = { 255, 0, 0 };
 	else if (name == "Green") col = { 0, 255, 0 };
 	else if (name == "Blue") col = { 0, 0, 255 };
+	else if (name == "Gray") col = { 160, 160, 160 };
 	else if (name == "Black") col = { 0, 0, 0 };
 	else if (name == "White") col = { 255, 255, 255 };
 	return col;
@@ -480,7 +482,7 @@ Mat ImageData::closeConcaveHull(Mat src, double meanArea)
 	Mat dst = src.clone();
 	vector<vector<Point>> contours;
 	findContours(dst, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE);
-	if (contours.size() == 0) return dst;
+	if (contours.size() == 0 || contours.size() > 10000) return dst;
 	vector<vector<Point>> hulls(contours.size());
 	for (uint i = 0; i < contours.size(); i++) convexHull(Mat(contours[i]), hulls[i]);
 	Mat imgDiff;
@@ -804,10 +806,10 @@ void ImageData::calcType(int ref, int mode)
 		Point3d pa, pb;
 		double dstLim = sqrt(layerList[ref].meanArea) * 2 / 3;
 		double hiRate = sqrt(layerList[ref].meanArea) / max(1.0, min(layerList[ref].meanHeight, (dpMax - dpMin + 1) / 2.0));
-		double scale = 1.0;
-		if (mode == 2) scale = 2.0;
-		if (mode == 3) scale = 0.5;
-		if (mode == 4) scale = 0.25;
+		double scale = 2.0;
+		if (mode == 2) scale = 1.5;
+		if (mode == 3) scale = 1.0;
+		if (mode == 4) scale = 0.5;
 		hiRate = pow(hiRate * scale, 2);
 		dstLim = pow(max((double)layerList[ref].ks, dstLim * scale), 2);
 		for (size_t i = 0; i < layerList.size(); i++) layerList[i].resetType();

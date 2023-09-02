@@ -20,6 +20,7 @@
 ## 支持文件类型
 - General Image Format (*.tif, *.png, *.bmp, *.jpg...)
 - Leica Image File Format (*.lif)
+- Olympus Image File Format (*.oir)
 - Image Series of Slices ...
 
 ## 使用教程
@@ -40,6 +41,7 @@ Windows x64
 
 ## 更新历史
 - v1.9 初始版本
+- v2.0 提高易用性并增加支持的图像类型
 
 ## 开源信息
 MIT license

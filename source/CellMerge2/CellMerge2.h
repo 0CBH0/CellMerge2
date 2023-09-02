@@ -41,6 +41,7 @@ private:
 	int readCMR(QString fileName);
 	int writeCMR(QString fileName);
 	int readLIF(QString fileName);
+	int readOIR(QString fileName);
 	int readIMG(QString fileName);
 	void setWidget(int id = 0);
 	void setMode(int value);

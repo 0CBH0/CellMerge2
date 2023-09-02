@@ -282,6 +282,7 @@ public:
         displayBox->setSizePolicy(sizePolicy1);
         displayBox->setMinimumSize(QSize(0, 25));
         displayBox->setChecked(false);
+        displayBox->setTristate(true);
 
         horizontalLayout_4->addWidget(displayBox);
 

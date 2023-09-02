@@ -7,7 +7,7 @@ CellMerge2::CellMerge2(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-	version = QStringLiteral("1.9");
+	version = QStringLiteral("2.0");
 	setWindowTitle(QStringLiteral("CellMerge2  v%1").arg(version));
 	setContextMenuPolicy(Qt::NoContextMenu);
 	setMouseTracking(true);
@@ -62,6 +62,7 @@ void CellMerge2::initial()
 	ui.depthSlider->setValue(0);
 	ui.weightSlider->setRange(0, 100);
 	ui.weightSlider->setValue(100);
+	ui.displayBox->setTristate(true);
 	ui.displayBox->setChecked(false);
 	ui.roiEdit->setText("");
 	ui.nameEdit->setText("");
@@ -96,22 +97,15 @@ void CellMerge2::modeChange()
 	if (widgetMode == 0)
 	{
 		setMode(1);
-		layerRec = ui.selectBox->currentIndex();
-		imageData.nucId = layerRec;
-		ui.selectBox->setCurrentIndex(imageData.nucId);
-		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[imageData.nucId].name));
 		setWidget();
 	}
 	else
 	{
 		setMode(0);
-		layerRec = ui.selectBox->currentIndex();
-		ui.selectBox->setCurrentIndex(layerRec);
-		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[layerRec].name));
-		setWidget(layerRec);
+		setWidget(ui.selectBox->currentIndex());
 	}
 	calcHist();
-	refreshView(true);
+	//refreshView(true);
 }
 
 void CellMerge2::setWidget(int id)
@@ -119,23 +113,29 @@ void CellMerge2::setWidget(int id)
 	if (id >= imageData.layerList.size()) return;
 	if (widgetMode == 0)
 	{
+		Qt::CheckState checked = (Qt::CheckState)imageData.layerList[id].display;
+		ui.displayBox->setChecked(0);
 		ui.nameEdit->setText(QString::fromStdString(imageData.layerList[id].name));
 		Vec3b color = imageData.imgMode == 1 ? Vec3b(255, 255, 255) : imageData.layerList[id].color;
 		ui.layerColor->setStyleSheet(QString("background-color:rgb(%1,%2,%3)").arg(color[0]).arg(color[1]).arg(color[2]));
 		ui.weightSlider->setRange(0, 100);
 		ui.weightSlider->setValue((int)round(imageData.layerList[id].weight * 100));
-		ui.displayBox->setChecked(imageData.layerList[id].display);
 		ui.levelSetting->setCurrentRange(imageData.layerList[id].minVal, imageData.layerList[id].percent, imageData.layerList[id].maxVal);
+		ui.displayBox->setTristate(true);
+		ui.displayBox->setCheckState(checked);
 	}
 	else
 	{
+		bool checked = imageData.cellLayer.display;
+		ui.displayBox->setChecked(0);
 		ui.nameEdit->setText(QString::fromStdString(imageData.cellLayer.name));
 		Vec3b color = imageData.cellLayer.color;
 		ui.layerColor->setStyleSheet(QString("background-color:rgb(%1,%2,%3)").arg(color[0]).arg(color[1]).arg(color[2]));
 		ui.weightSlider->setValue(imageData.layerList[imageData.nucId].ks);
 		ui.weightSlider->setRange(1, 40);
-		ui.displayBox->setChecked(imageData.cellLayer.display);
 		ui.levelSetting->setCurrentRange(imageData.layerList[imageData.nucId].minVal, imageData.layerList[imageData.nucId].percent, imageData.layerList[imageData.nucId].maxVal);
+		ui.displayBox->setTristate(false);
+		ui.displayBox->setChecked(checked);
 	}
 }
 
@@ -217,7 +217,18 @@ void CellMerge2::createMenus()
 
 void CellMerge2::openFunc()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, QStringLiteral("选择项目文件..."), ".", QStringLiteral("项目文件 (*.cmr)"));
+	QString projectPath = ".";
+	if (projectName != "")
+	{
+		QFileInfo projectInfo(projectName);
+		projectPath = projectInfo.absolutePath();
+	}
+	else if (imageData.fileName != "")
+	{
+		QFileInfo projectInfo(QString::fromStdString(imageData.fileName));
+		projectPath = projectInfo.absolutePath();
+	}
+	QString fileName = QFileDialog::getOpenFileName(this, QStringLiteral("选择项目文件..."), projectPath, QStringLiteral("项目文件 (*.cmr)"));
 	if (fileName == "") return;
 	disableWidget(true);
 	int res = loadFile(fileName, "cmr");
@@ -233,8 +244,19 @@ void CellMerge2::openFunc()
 
 void CellMerge2::saveFunc()
 {
+	QString projectPath = ".";
+	if (projectName != "")
+	{
+		QFileInfo projectInfo(projectName);
+		projectPath = projectInfo.absolutePath();
+	}
+	else if (imageData.fileName != "")
+	{
+		QFileInfo projectInfo(QString::fromStdString(imageData.fileName));
+		projectPath = projectInfo.absolutePath();
+	}
 	if (imageData.layerList.size() == 0) return;
-	if (projectName == "") projectName = QFileDialog::getSaveFileName(this, QStringLiteral("保存当前项目为..."), ".", QStringLiteral("项目文件 (*.cmr)"));
+	if (projectName == "") projectName = QFileDialog::getSaveFileName(this, QStringLiteral("保存当前项目为..."), projectPath, QStringLiteral("项目文件 (*.cmr)"));
 	if (projectName == "") return;
 	disableWidget(true);
 	int res = writeCMR(projectName);
@@ -243,7 +265,18 @@ void CellMerge2::saveFunc()
 
 void CellMerge2::importFunc()
 {
-	QStringList fileNames = QFileDialog::getOpenFileNames(this, QStringLiteral("选择图像文件..."), ".", QStringLiteral("图像文件 (*.*)"));
+	QString projectPath = ".";
+	if (projectName != "")
+	{
+		QFileInfo projectInfo(projectName);
+		projectPath = projectInfo.absolutePath();
+	}
+	else if (imageData.fileName != "")
+	{
+		QFileInfo projectInfo(QString::fromStdString(imageData.fileName));
+		projectPath = projectInfo.absolutePath();
+	}
+	QStringList fileNames = QFileDialog::getOpenFileNames(this, QStringLiteral("选择图像文件..."), projectPath, QStringLiteral("图像文件 (*.*)"));
 	if (fileNames.size() == 0 || fileNames[0] == "") return;
 	disableWidget(true);
 	if (fileNames.size() == 1)
@@ -292,6 +325,7 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	int res = 0;
 	if (type == "cmr") res = readCMR(fileName);
 	else if (type == "lif") res = readLIF(fileName);
+	else if (type == "oir") res = readOIR(fileName);
 	else res = readIMG(fileName);
 	if (res == -1 || imageData.layerList.size() == 0 || imageData.depth == 0) return res;
 	imageData.calcMode();
@@ -320,13 +354,14 @@ int CellMerge2::loadFile(QString fileName, QString type)
 	}
 	else
 	{
+		imageData.nucId = 0;
 		for (size_t i = 0; i < imageData.layerList.size(); i++) ui.selectBox->addItem(QString::fromStdString(imageData.layerList[i].name));
 		ui.selectBox->setCurrentIndex(0);
 		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
 	}
 	setWidget(0);
 	calcHist();
-	refreshView(true);
+	//refreshView(true);
 	statForm.clearForm();
 	return res;
 }
@@ -340,6 +375,7 @@ int CellMerge2::loadSeries(QStringList fileNames)
 	Mat img = imread(fileNameConv);
 	if (!img.data) return -1;
 	imageData.release();
+	imageData.fileName = fileNames[0].toStdString();
 	imageData.depth = fileNames.size();
 	imageData.size = Size(img.cols, img.rows);
 	imageData.addLayer("Blue", Vec3b(0, 0, 255));
@@ -393,13 +429,14 @@ int CellMerge2::loadSeries(QStringList fileNames)
 	}
 	else
 	{
+		imageData.nucId = 0;
 		for (size_t i = 0; i < imageData.layerList.size(); i++) ui.selectBox->addItem(QString::fromStdString(imageData.layerList[i].name));
 		ui.selectBox->setCurrentIndex(0);
 		ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[0].name));
 	}
 	setWidget(0);
 	calcHist();
-	refreshView(true);
+	//refreshView(true);
 	statForm.clearForm();
 	return 0;
 }
@@ -425,6 +462,7 @@ int CellMerge2::readCMR(QString fileName)
 		return -1;
 	}
 	imageData.release();
+	imageData.fileName = fileName.toStdString();
 	fread(&ia, 4, 1, cmr);
 	imageData.size.width = ia;
 	fread(&ia, 4, 1, cmr);
@@ -703,6 +741,7 @@ int CellMerge2::readLIF(QString fileName)
 	if (result == QDialog::Accepted)
 	{
 		imageData.release();
+		imageData.fileName = fileName.toStdString();
 		int id = itemSelector.itemBox->currentIndex();
 		string name = itemSelector.itemBox->currentText().toStdString() + "_";
 		imageData.size = Size(dimList[id][0], dimList[id][1]);
@@ -730,6 +769,324 @@ int CellMerge2::readLIF(QString fileName)
 	return 0;
 }
 
+int CellMerge2::readOIR(QString fileName)
+{
+	FILE *file;
+	xmlDocPtr doc;
+	xmlNodePtr curNode;
+	uint ia, ib, infoOffset, blockNum;
+
+	QTextCodec *code = QTextCodec::codecForName("GB2312");
+	string fileNameConv = code->fromUnicode(fileName).data();
+	file = fopen(fileNameConv.c_str(), "rb");
+	if (file == NULL) return -1;
+	fseek(file, 0, 2);
+	long fileSize = ftell(file);
+	rewind(file);
+	if (fileSize < 0x60)
+	{
+		fclose(file);
+		return -1;
+	}
+	char oirHeader[0x20];
+	fread(oirHeader, 1, 0x10, file);
+	oirHeader[0x10] = '\0';
+	fseek(file, 0x10, 1);
+	fread(&ia, 4, 1, file);
+	fread(&ib, 4, 1, file);
+	if (ia != fileSize || strcmp(oirHeader, "OLYMPUSRAWFORMAT") != 0)
+	{
+		fclose(file);
+		return -1;
+	}
+	fread(&infoOffset, 4, 1, file);
+	fread(&ia, 4, 1, file);
+	fread(&blockNum, 4, 1, file);
+	fseek(file, 0x14, 1);
+	fread(oirHeader, 1, 8, file);
+	oirHeader[8] = '\0';
+	if (strcmp(oirHeader, "FLUOVIEW") != 0)
+	{
+		fclose(file);
+		return -1;
+	}
+	vector<uint> infoOffsetList;
+	fseek(file, infoOffset + 4, 0);
+	for (uint i = 0; i < blockNum; i++)
+	{
+		fread(&ia, 4, 1, file);
+		fread(&ib, 4, 1, file);
+		infoOffsetList.push_back(ia);
+	}
+	fseek(file, infoOffsetList[blockNum - 1], 0);
+	fread(&ia, 4, 1, file);
+	fread(&ib, 4, 1, file);
+	if (ib != 0)
+	{
+		fclose(file);
+		return -1;
+	}
+	vector<uint> dimList;
+	vector<string> layerList;
+	map<string, vector<string>> channelList;
+	map<string, map<string, map<uint, uint, less<uint>>>> dataList;
+	for (uint id = 1; id < 7; id++)
+	{
+		fread(&ia, 4, 1, file);
+		fseek(file, 0x20, 1);
+		fread(&ib, 4, 1, file);
+		if (id != ia)
+		{
+			fclose(file);
+			return -1;
+		}
+		if (id == 2)
+		{
+			char *metadata = (char*)malloc(ib);
+			fread(metadata, 1, ib, file);
+			xmlDocPtr doc = xmlReadMemory(metadata, ib, NULL, "UTF-8", XML_PARSE_RECOVER);
+			free(metadata);
+			if (doc == NULL)
+			{
+				fclose(file);
+				return -1;
+			}
+			xmlNodePtr curNode = xmlDocGetRootElement(doc);
+			if (curNode == NULL || xmlStrcmp(curNode->name, BAD_CAST"imageProperties"))
+			{
+				xmlFreeDoc(doc);
+				fclose(file);
+				return -1;
+			}
+			curNode = curNode->xmlChildrenNode;
+			while (curNode != NULL)
+			{
+				if (!xmlStrcmp(curNode->name, BAD_CAST"imageInfo"))
+				{
+					xmlNodePtr subNode = curNode->xmlChildrenNode;
+					while (subNode != NULL)
+					{
+						if (!xmlStrcmp(subNode->name, BAD_CAST"width")) dimList.push_back(atoi((char*)xmlNodeGetContent(subNode)));
+						if (!xmlStrcmp(subNode->name, BAD_CAST"height")) dimList.push_back(atoi((char*)xmlNodeGetContent(subNode)));
+						subNode = subNode->next;
+					}
+				}
+				if (!xmlStrcmp(curNode->name, BAD_CAST"acquisition"))
+				{
+					xmlNodePtr subNode = curNode->xmlChildrenNode;
+					while (subNode != NULL)
+					{
+						if (!xmlStrcmp(subNode->name, BAD_CAST"phase"))
+						{
+							xmlNodePtr phaseNode = subNode->xmlChildrenNode;
+							while (phaseNode != NULL)
+							{
+								if (!xmlStrcmp(phaseNode->name, BAD_CAST"group"))
+								{
+									xmlNodePtr groupNode = phaseNode->xmlChildrenNode;
+									while (groupNode != NULL)
+									{
+										if (!xmlStrcmp(groupNode->name, BAD_CAST"channel"))
+										{
+											string channelID = string((char*)xmlGetProp(groupNode, BAD_CAST"id"));
+											xmlNodePtr chNode = groupNode->xmlChildrenNode;
+											while (chNode != NULL)
+											{
+												if (!xmlStrcmp(chNode->name, BAD_CAST"dyeName"))
+												{
+													channelList[channelID] = vector<string>(4);
+													channelList[channelID][0] = string((char*)xmlNodeGetContent(chNode));
+												}
+												chNode = chNode->next;
+											}
+										}
+										groupNode = groupNode->next;
+									}
+								}
+								phaseNode = phaseNode->next;
+							}
+						}
+						subNode = subNode->next;
+					}
+				}
+				curNode = curNode->next;
+			}
+			xmlFreeDoc(doc);
+		}
+		else if (id == 5)
+		{
+			uint termNum = ib;
+			char termName[0x100];
+			for (uint i = 0; i < termNum; i++)
+			{
+				fread(&ia, 4, 1, file);
+				fread(termName, 1, ia, file);
+				termName[ia] = '\0';
+				fread(&ia, 4, 1, file);
+				char *metadata = (char*)malloc(ia);
+				fread(metadata, 1, ia, file);
+				if (channelList.find(string(termName)) == channelList.end()) continue;
+				xmlDocPtr doc = xmlReadMemory(metadata, ia, NULL, "UTF-8", XML_PARSE_RECOVER);
+				free(metadata);
+				if (doc == NULL)
+				{
+					fclose(file);
+					return -1;
+				}
+				xmlNodePtr curNode = xmlDocGetRootElement(doc);
+				if (curNode == NULL || xmlStrcmp(curNode->name, BAD_CAST"LUT"))
+				{
+					xmlFreeDoc(doc);
+					fclose(file);
+					return -1;
+				}
+				curNode = curNode->xmlChildrenNode;
+				while (curNode != NULL)
+				{
+					if (!xmlStrcmp(curNode->name, BAD_CAST"name")) channelList[string(termName)][1] = string((char*)xmlNodeGetContent(curNode));
+					if (!xmlStrcmp(curNode->name, BAD_CAST"resolution")) channelList[string(termName)][2] = string((char*)xmlNodeGetContent(curNode));
+					if (!xmlStrcmp(curNode->name, BAD_CAST"data"))
+					{
+						if (channelList[string(termName)][2] != "65536" && channelList[string(termName)][2] != "256")
+						{
+							xmlFreeDoc(doc);
+							fclose(file);
+							return -1;
+						}
+						xmlChar *lutData = xmlNodeGetContent(curNode);
+						char colName[9];
+						for (size_t j = 0; j < 8; j++) colName[j] = lutData[(atoi(channelList[string(termName)][2].c_str()) - 1) * 8 + j];
+						colName[8] = '\0';
+						channelList[string(termName)][3] = string(colName);
+					}
+					curNode = curNode->next;
+				}
+				xmlFreeDoc(doc);
+			}
+		}
+		else if (id == 6)
+		{
+			dimList.push_back(ib);
+			char termName[0x100];
+			for (size_t i = 0; i < dimList[2]; i++)
+			{
+				fread(&ia, 4, 1, file);
+				fread(termName, 1, ia, file);
+				termName[ia] = '\0';
+				layerList.push_back(string(termName));
+				fread(&ia, 4, 1, file);
+			}
+		}
+		else fseek(file, ib, 1);
+	}
+	for (size_t i = 0; i < layerList.size(); i++)
+	{
+		dataList[layerList[i]] = map<string, map<uint, uint, less<uint>>>();
+		for (auto it : channelList) dataList[layerList[i]][it.first] = map<uint, uint, less<uint>>();
+	}
+	for (size_t i = 0; i < infoOffsetList.size() - 1; i++)
+	{
+		fseek(file, infoOffsetList[i], 0);
+		fread(&ia, 4, 1, file);
+		fread(&ib, 4, 1, file);
+		if (ib == 3)
+		{
+			fseek(file, 8, 1);
+			fread(&ia, 4, 1, file);
+			char termName[0x100];
+			fread(termName, 1, ia, file);
+			termName[ia] = '\0';
+			QStringList splitName = QString(termName).split("_");
+
+			if (splitName.size() < 3) continue;
+			string layerName = splitName[0].toStdString();
+			for (size_t j = 1; j < splitName.size() - 2; j++) layerName += "_" + splitName[j].toStdString();
+			if (dataList.find(layerName) == dataList.end()) continue;
+			uint blockId = atoi(splitName[splitName.size() - 1].toStdString().c_str());
+			dataList[layerName][splitName[splitName.size() - 2].toStdString()][blockId] = infoOffsetList[i + 1];
+		}
+	}
+	imageData.release();
+	imageData.fileName = fileName.toStdString();
+	imageData.size = Size(dimList[0], dimList[1]);
+	imageData.depth = dimList[2];
+	imageData.dpMin = 0;
+	imageData.dpMax = imageData.depth - 1;
+	int size = imageData.size.area();
+	for (auto channel : channelList)
+	{
+		uint color = 0;
+		for (size_t i = 0; i < 8; i++)
+		{
+			color *= 0x10;
+			color += channel.second[3].c_str()[i] > 0x40 ? channel.second[3].c_str()[i] - 0x37 : channel.second[3].c_str()[i] - 0x30;
+		}
+		if (channel.second[1] == "Blue") imageData.nucId = imageData.layerList.size();
+		imageData.addLayer(channel.second[0], { (uchar)((color >> 24) & 0xFF), (uchar)((color >> 16) & 0xFF), (uchar)((color >> 8) & 0xFF) });
+		if (channel.second[2] == "65536") for (size_t d = 0; d < imageData.depth; d++)
+		{
+			Mat block = Mat::zeros(Size(dimList[0], dimList[1]), CV_16UC1);
+			uchar *blockPtr = block.data;
+			for (auto it : dataList[layerList[d]][channel.first])
+			{
+				fseek(file, it.second, 0);
+				fread(&ia, 4, 1, file);
+				if (blockPtr + ia > block.dataend)
+				{
+					block.release();
+					fclose(file);
+					return -1;
+				}
+				fread(blockPtr, 1, ia, file);
+				blockPtr += ia;
+			}
+			ushort grayMax = 0, graySMax = 0, grayMin = 65535;
+			for (int i = 0; i < dimList[1]; i++) for (int j = 0; j < dimList[0]; j++)
+			{
+				if (graySMax < block.at<ushort>(i, j) && block.at<ushort>(i, j) < 65534) graySMax = block.at<ushort>(i, j);
+				if (grayMax < block.at<ushort>(i, j)) grayMax = block.at<ushort>(i, j);
+				if (grayMin > block.at<ushort>(i, j)) grayMin = block.at<ushort>(i, j);
+			}
+			if (grayMax - graySMax > 4000) grayMax = graySMax;
+			if (grayMin == 0) grayMin = 1;
+			int grayRange = grayMax - grayMin + 1;
+			double coef[65536];
+			if (grayRange > 10)
+			{
+				for (int i = 0; i < grayMin; i++) coef[i] = 0.0;
+				for (int i = grayMin; i < grayMax; i++) coef[i] = round(255.0 * (i - grayMin + 1) / grayRange);
+				for (int i = grayMax; i < 65536; i++) coef[i] = 255.0;
+			}
+			else for (int i = 0; i < 65536; i++) coef[i] = 0.0;
+			for (int i = 0; i < dimList[1]; i++) for (int j = 0; j < dimList[0]; j++)
+			{
+				imageData.layerList[imageData.layerList.size() - 1].matList[d].at<uchar>(i, j) = (uchar)coef[block.at<ushort>(i, j)];
+			}
+			block.release();
+		}
+		else if (channel.second[2] == "256") for (size_t d = 0; d < imageData.depth; d++)
+		{
+			uchar *blockPtr = imageData.layerList[imageData.layerList.size() - 1].matList[d].data;
+			const uchar *blockEnd = imageData.layerList[imageData.layerList.size() - 1].matList[d].dataend;
+			for (auto it : dataList[layerList[d]][channel.first])
+			{
+				fseek(file, it.second, 0);
+				fread(&ia, 4, 1, file);
+				if (blockPtr + ia > blockEnd)
+				{
+					fclose(file);
+					return -1;
+				}
+				fread(blockPtr, 1, ia, file);
+				blockPtr += ia;
+			}
+			imageData.normalize(imageData.layerList.size() - 1, d);
+		}
+	}
+	fclose(file);
+	return 0;
+}
+
 int CellMerge2::readIMG(QString fileName)
 {
 	QTextCodec *code = QTextCodec::codecForName("GB2312");
@@ -739,6 +1096,7 @@ int CellMerge2::readIMG(QString fileName)
 	vector<Mat> chs;
 	split(img, chs);
 	imageData.release();
+	imageData.fileName = fileName.toStdString();
 	imageData.size = Size(img.cols, img.rows);
 	imageData.depth = 1;
 	imageData.dpMin = 0;
@@ -1148,7 +1506,7 @@ void CellMerge2::setWeightFunc(int value)
 void CellMerge2::displayFunc(int value)
 {
 	if (imageData.layerList.size() == 0) return;
-	if (widgetMode == 0) imageData.layerList[ui.selectBox->currentIndex()].display = ui.displayBox->isChecked();
+	if (widgetMode == 0) imageData.layerList[ui.selectBox->currentIndex()].display = (unsigned char)ui.displayBox->checkState();
 	else imageData.cellLayer.display = ui.displayBox->isChecked();
 	refreshView(true);
 }
@@ -1157,19 +1515,8 @@ void CellMerge2::selLayerFunc(int value)
 {
 	if (imageData.layerList.size() == 0 || value < 0 || value >= ui.selectBox->count()) return;
 	ui.selectBox->setToolTip(QString::fromStdString(imageData.layerList[value].name));
-	if (widgetMode == 0) setWidget(value);
-	else
-	{
-		imageData.nucId = value;
-		if (imageData.nucId != value)
-		{
-			imageData.layerList[imageData.nucId].maxVal = 255;
-			imageData.layerList[imageData.nucId].minVal = 1;
-			imageData.layerList[imageData.nucId].percent = 1.0;
-			imageData.nucId = value;
-		}
-		setWidget();
-	}
+	imageData.nucId = value;
+	setWidget(value);
 	calcHist();
 	refreshView(true);
 }
@@ -1188,7 +1535,7 @@ void CellMerge2::resetLayerFunc()
 		setWidget();
 	}
 	calcHist();
-	refreshView(true);
+	//refreshView(true);
 }
 
 void CellMerge2::statShowFunc()
@@ -1196,6 +1543,7 @@ void CellMerge2::statShowFunc()
 	if (imageData.layerList.size() == 0 || ui.selectBox->count() == 0) return;
 	statForm.close();
 	statForm.layerBox->clear();
+	if (statForm.isMinimized()) statForm.showNormal();
 	if (imageData.imgMode == 1)
 	{
 		statForm.layerBox->addItem(QString::fromStdString(imageData.layerList[0].name));

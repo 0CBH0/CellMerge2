@@ -86,22 +86,22 @@
          </item>
          <item>
           <property name="text">
-           <string>距离</string>
+           <string>2.0倍半径</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>2倍距离</string>
+           <string>1.5倍半径</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>1/2倍距离</string>
+           <string>1.0倍半径</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>1/4倍距离</string>
+           <string>0.5倍距离</string>
           </property>
          </item>
         </widget>
